@@ -11,7 +11,7 @@ class ProductoController extends Controller
 {
     public function index()
     {
-        $productos = Producto::with(['categoria', 'proveedor', 'inventario'])->get();
+        $productos = Producto::with(['categoria', 'proveedor'])->get();
         return view('admin.productos.index', compact('productos'));
     }
 
@@ -29,6 +29,9 @@ class ProductoController extends Controller
             'descripcion'  => 'nullable|string',
             'precio'       => 'required|numeric|min:0',
             'estado'       => 'required|string',
+            'stock_actual' => 'required|integer|min:0',
+            'stock_minimo' => 'required|integer|min:0',
+            'stock_maximo' => 'required|integer|min:0',
             'categoria_id' => 'required|exists:categorias,id',
             'proveedor_id' => 'required|exists:proveedores,id',
         ]);
@@ -53,6 +56,9 @@ class ProductoController extends Controller
             'descripcion'  => 'nullable|string',
             'precio'       => 'required|numeric|min:0',
             'estado'       => 'required|string',
+            'stock_actual' => 'required|integer|min:0',
+            'stock_minimo' => 'required|integer|min:0',
+            'stock_maximo' => 'required|integer|min:0',
             'categoria_id' => 'required|exists:categorias,id',
             'proveedor_id' => 'required|exists:proveedores,id',
         ]);

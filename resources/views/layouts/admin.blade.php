@@ -260,18 +260,29 @@
     <div class="sidebar">
         <div class="sidebar-brand">
             STATELESS
-            <div class="sidebar-subtitle">Panel Administrador</div>
+            <div class="sidebar-subtitle">
+    @if(Auth::user()->role->name === 'admin')
+        Panel Administrador
+    @elseif(Auth::user()->role->name === 'empleado')
+        Panel Empleado
+    @endif
+</div>
         </div>
         <nav class="sidebar-nav">
-            <a href="{{ url('/dashboard') }}">Inicio</a>
-            <a href="{{ route('ventas.index') }}">Ventas</a>
-            <a href="{{ route('usuarios.index') }}">Usuarios</a>
-            <a href="{{ route('inventarios.index') }}">Inventario</a>
-            <a href="{{ route('envios.index') }}">Envíos</a>
-            <a href="{{ route('productos.index') }}">Productos</a>
-            <a href="{{ route('proveedores.index') }}">Proveedores</a>
-            <a href="{{ route('categorias.index') }}">Categorías</a>
-        </nav>
+    <a href="{{ url('/account') }}">Inicio</a>
+    @if(Auth::user()->role->name === 'admin')
+        <a href="{{ route('ventas.index') }}">Ventas</a>
+        <a href="{{ route('usuarios.index') }}">Usuarios</a>
+        <a href="{{ route('envios.index') }}">Envíos</a>
+        <a href="{{ route('productos.index') }}">Productos</a>
+        <a href="{{ route('proveedores.index') }}">Proveedores</a>
+        <a href="{{ route('categorias.index') }}">Categorías</a>
+    @elseif(Auth::user()->role->name === 'empleado')
+    <a href="{{ route('empleado.ventas.index') }}">Ventas</a>
+    <a href="{{ route('empleado.envios.index') }}">Envíos</a>
+    <a href="{{ route('empleado.proveedores.index') }}">Proveedores</a>
+@endif
+</nav>
         <div class="sidebar-footer">
             {{ Auth::user()->name ?? 'Admin' }}
         </div>

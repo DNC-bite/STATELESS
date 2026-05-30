@@ -13,17 +13,34 @@
     <a href="{{ route('productos.create') }}" class="btn-sl">+ Registrar</a>
 </div>
 
+<!-- STATS -->
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:32px;">
+    <div class="stat-card">
+        <div class="stat-label">Total Productos</div>
+        <div class="stat-value">{{ $productos->count() }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Stock Bajo</div>
+        <div class="stat-value">{{ $productos->filter(fn($p) => $p->stock_actual <= $p->stock_minimo)->count() }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Sin Stock</div>
+        <div class="stat-value">{{ $productos->where('stock_actual', 0)->count() }}</div>
+    </div>
+</div>
+
 <table class="stateless-table">
     <thead>
         <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Descripción</th>
             <th>Precio</th>
             <th>Estado</th>
+            <th>Stock Actual</th>
+            <th>Stock Mín</th>
+            <th>Stock Máx</th>
             <th>Categoría</th>
             <th>Proveedor</th>
-            <th>Stock</th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -32,12 +49,17 @@
         <tr>
             <td>{{ $producto->id }}</td>
             <td>{{ $producto->nombre }}</td>
-            <td>{{ Str::limit($producto->descripcion, 30) ?? '—' }}</td>
             <td>${{ number_format($producto->precio, 2) }}</td>
-            <td>{{ $producto->estado }}</td>
+            <td>{{ ucfirst($producto->estado) }}</td>
+            @if($producto->stock_actual <= $producto->stock_minimo)
+                <td style="color:#c00; font-weight:600;">{{ $producto->stock_actual }}</td>
+            @else
+                <td>{{ $producto->stock_actual }}</td>
+            @endif
+            <td>{{ $producto->stock_minimo }}</td>
+            <td>{{ $producto->stock_maximo }}</td>
             <td>{{ $producto->categoria->nombre ?? '—' }}</td>
             <td>{{ $producto->proveedor->nombre ?? '—' }}</td>
-            <td>{{ $producto->inventario->stock_actual ?? '—' }}</td>
             <td style="display:flex; gap:8px;">
                 <a href="{{ route('productos.edit', $producto) }}" class="btn-sl-outline">Editar</a>
                 <form action="{{ route('productos.destroy', $producto) }}" method="POST">
@@ -49,7 +71,7 @@
         </tr>
         @empty
         <tr>
-            <td colspan="9" style="text-align:center; opacity:0.5; padding:40px;">No hay productos registrados.</td>
+            <td colspan="10" style="text-align:center; opacity:0.5; padding:40px;">No hay productos registrados.</td>
         </tr>
         @endforelse
     </tbody>
