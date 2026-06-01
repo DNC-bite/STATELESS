@@ -13,10 +13,11 @@ use App\Http\Controllers\EnvioController;
 // Ruta principal
 Route::get('/', fn () => view('welcome'));
 
+
 // Dashboard
-Route::get('/dashboard', fn () => view('dashboard'))
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::get('/dashboard', function () {
+    return redirect()->route('account');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 // Perfil
 Route::middleware('auth')->group(function () {
@@ -30,19 +31,21 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('usuarios', UserController::class);
     Route::resource('categorias', CategoriaController::class);
     Route::resource('productos', ProductoController::class);
-    Route::resource('inventarios', InventarioController::class);
     Route::resource('proveedores', ProveedorController::class);
     Route::resource('ventas', VentaController::class);
     Route::resource('envios', EnvioController::class);
 });
 
 // Rutas Empleado
-Route::middleware(['auth', 'role:empleado'])->prefix('empleado')->group(function () {
+Route::middleware(['auth', 'role:empleado'])->prefix('empleado')->name('empleado.')->group(function () {
     Route::resource('ventas', VentaController::class);
-    Route::resource('inventarios', InventarioController::class);
     Route::resource('envios', EnvioController::class);
     Route::resource('proveedores', ProveedorController::class);
 });
 
 // Autenticación
 require __DIR__.'/auth.php';
+
+Route::get('/account', function () {
+    return view('account.index');
+})->middleware('auth')->name('account');

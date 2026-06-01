@@ -17,6 +17,9 @@ return new class extends Migration
         $table->text('descripcion')->nullable();
         $table->decimal('precio', 10, 2);
         $table->string('estado')->default('activo');
+        $table->integer('stock_actual')->default(0);
+        $table->integer('stock_minimo')->default(5);
+        $table->integer('stock_maximo')->default(100);
         $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
         $table->foreignId('proveedor_id')->constrained('proveedores')->onDelete('cascade');
         $table->timestamps();

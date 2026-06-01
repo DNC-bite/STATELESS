@@ -153,16 +153,16 @@
         </ul>
 
         <div class="nav-actions">
-            @auth
-                <a href="{{ route('dashboard') }}">Mi cuenta</a>
-                <form method="POST" action="{{ route('logout') }}" style="display:inline">
-                    @csrf
-                    <button type="submit" style="background:none; border:none; color:#fff; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; opacity:1;" onmouseover="this.style.opacity=0.6" onmouseout="this.style.opacity=1">Salir</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}">Iniciar Sesión</a>
-                <a href="{{ route('register') }}" class="btn-stateless">Registrarse</a>
-            @endauth
+        @auth
+            <a href="{{ route('account') }}">Mi Cuenta</a>
+            <form method="POST" action="{{ route('logout') }}" style="display:inline">
+        @csrf
+                <button type="submit" style="background:none; border:none; color:#fff; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; opacity:1;" onmouseover="this.style.opacity=0.6" onmouseout="this.style.opacity=1">Salir</button>
+            </form>
+        @else
+            <a href="{{ route('login') }}">Iniciar Sesión</a>
+            <a href="{{ route('register') }}" class="btn-stateless">Registrarse</a>
+        @endauth
         </div>
     </nav>
 

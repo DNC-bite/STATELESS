@@ -42,6 +42,18 @@
             </select>
         </div>
         <div class="sl-form-group">
+            <label class="sl-label">Stock Actual</label>
+            <input type="number" name="stock_actual" class="sl-input" value="{{ old('stock_actual', 0) }}" min="0" required>
+        </div>
+        <div class="sl-form-group">
+            <label class="sl-label">Stock Mínimo</label>
+            <input type="number" name="stock_minimo" class="sl-input" value="{{ old('stock_minimo', 5) }}" min="0" required>
+        </div>
+        <div class="sl-form-group">
+            <label class="sl-label">Stock Máximo</label>
+            <input type="number" name="stock_maximo" class="sl-input" value="{{ old('stock_maximo', 100) }}" min="0" required>
+        </div>
+        <div class="sl-form-group">
             <label class="sl-label">Categoría</label>
             <select name="categoria_id" class="sl-input" required>
                 <option value="">Seleccionar...</option>
