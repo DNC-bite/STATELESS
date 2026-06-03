@@ -21,6 +21,14 @@ class ProductoController extends Controller
         $proveedores = Proveedor::all();
         return view('admin.productos.create', compact('categorias', 'proveedores'));
     }
+    public function show($id)
+{
+    $producto = Producto::with(['categoria', 'proveedor'])->findOrFail($id);
+    $relacionados = Producto::where('categoria_id', $producto->categoria_id)
+        ->where('id', '!=', $producto->id)
+        ->take(3)->get();
+    return view('producto.show', compact('producto', 'relacionados'));
+}
 
     public function store(Request $request)
     {

@@ -33,6 +33,7 @@
     <thead>
         <tr>
             <th>ID</th>
+            <th>Imagen</th>
             <th>Nombre</th>
             <th>Precio</th>
             <th>Estado</th>
@@ -47,7 +48,15 @@
     <tbody>
         @forelse($productos as $producto)
         <tr>
+            
             <td>{{ $producto->id }}</td>
+            <td>
+    @if($producto->imagen)
+        <img src="{{ $producto->imagen }}" style="width:50px; height:60px; object-fit:cover;">
+    @else
+        <div style="width:50px; height:60px; background:#f2f2f2;"></div>
+    @endif
+</td>
             <td>{{ $producto->nombre }}</td>
             <td>${{ number_format($producto->precio, 2) }}</td>
             <td>{{ ucfirst($producto->estado) }}</td>

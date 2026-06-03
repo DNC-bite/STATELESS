@@ -9,10 +9,31 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\EnvioController;
+use App\Http\Controllers\CarritoController;
+use App\Models\Producto;
+
+Route::get('/producto/{producto}', [ProductoController::class, 'show'])->name('producto.show');
 
 // Ruta principal
-Route::get('/', fn () => view('welcome'));
+Route::get('/', function () {
+    $essentials = Producto::where('estado', 'activo')
+        ->whereHas('categoria', fn($q) => $q->where('nombre', 'Essentials'))
+        ->take(3)->get();
 
+    $chromaLife = Producto::where('estado', 'activo')
+        ->whereHas('categoria', fn($q) => $q->where('nombre', 'The Chroma Life'))
+        ->take(3)->get();
+
+    return view('welcome', compact('essentials', 'chromaLife'));
+});
+// Carrito
+Route::middleware('auth')->group(function () {
+    Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
+    Route::post('/carrito/agregar/{producto}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
+    Route::patch('/carrito/actualizar/{item}', [CarritoController::class, 'actualizar'])->name('carrito.actualizar');
+    Route::delete('/carrito/eliminar/{item}', [CarritoController::class, 'eliminar'])->name('carrito.eliminar');
+    Route::delete('/carrito/vaciar', [CarritoController::class, 'vaciar'])->name('carrito.vaciar');
+}); 
 
 // Dashboard
 Route::get('/dashboard', function () {
