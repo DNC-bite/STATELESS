@@ -17,6 +17,7 @@ return new class extends Migration
         $table->text('descripcion')->nullable();
         $table->decimal('precio', 10, 2);
         $table->string('estado')->default('activo');
+        $table->string('imagen')->nullable();
         $table->integer('stock_actual')->default(0);
         $table->integer('stock_minimo')->default(5);
         $table->integer('stock_maximo')->default(100);

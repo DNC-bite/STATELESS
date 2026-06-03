@@ -10,16 +10,17 @@ class Producto extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nombre',
-        'descripcion',
-        'precio',
-        'estado',
-        'stock_actual',
-        'stock_minimo',
-        'stock_maximo',
-        'categoria_id',
-        'proveedor_id',
-    ];
+    'nombre',
+    'descripcion',
+    'precio',
+    'estado',
+    'imagen',
+    'stock_actual',
+    'stock_minimo',
+    'stock_maximo',
+    'categoria_id',
+    'proveedor_id',
+];
 
     public function categoria()
     {

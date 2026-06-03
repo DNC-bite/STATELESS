@@ -154,15 +154,31 @@
 
         <div class="nav-actions">
         @auth
-            <a href="{{ route('account') }}">Mi Cuenta</a>
-            <form method="POST" action="{{ route('logout') }}" style="display:inline">
+    <a href="{{ route('carrito.index') }}" style="position:relative; display:inline-flex; align-items:center; gap:6px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h13M10 21a1 1 0 100-2 1 1 0 000 2zm7 0a1 1 0 100-2 1 1 0 000 2z" />
+        </svg>
+        @php
+            $cantidadCarrito = 0;
+            if(Auth::check()) {
+                $carritoNav = \App\Models\Carrito::where('user_id', Auth::id())->first();
+                $cantidadCarrito = $carritoNav ? $carritoNav->items->sum('cantidad') : 0;
+            }
+        @endphp
+       <span id="carrito-contador" 
+    @if($cantidadCarrito > 0) style="background:#fff; color:#000; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700;" 
+    @else style="display:none;" 
+    @endif>{{ $cantidadCarrito }}</span>
+    </a>
+    <a href="{{ route('account') }}">Mi Cuenta</a>
+    <form method="POST" action="{{ route('logout') }}" style="display:inline">
         @csrf
-                <button type="submit" style="background:none; border:none; color:#fff; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; opacity:1;" onmouseover="this.style.opacity=0.6" onmouseout="this.style.opacity=1">Salir</button>
-            </form>
-        @else
-            <a href="{{ route('login') }}">Iniciar Sesión</a>
-            <a href="{{ route('register') }}" class="btn-stateless">Registrarse</a>
-        @endauth
+        <button type="submit" style="background:none; border:none; color:#fff; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; opacity:1;" onmouseover="this.style.opacity=0.6" onmouseout="this.style.opacity=1">Salir</button>
+    </form>
+@else
+    <a href="{{ route('login') }}">Iniciar Sesión</a>
+    <a href="{{ route('register') }}" class="btn-stateless">Registrarse</a>
+@endauth
         </div>
     </nav>
 

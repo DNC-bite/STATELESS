@@ -31,6 +31,11 @@
             <textarea name="descripcion" class="sl-input" rows="4">{{ old('descripcion') }}</textarea>
         </div>
         <div class="sl-form-group">
+    <label class="sl-label">Nombre de imagen</label>
+    <input type="text" name="imagen" class="sl-input" value="{{ old('imagen') }}" placeholder="camiseta-negra.jpg">
+    <p style="font-size:11px; opacity:0.4; margin-top:6px; letter-spacing:1px;">Sube la imagen a /public/images/ y escribe el nombre del archivo</p>
+</div>
+        <div class="sl-form-group">
             <label class="sl-label">Precio</label>
             <input type="number" name="precio" class="sl-input" value="{{ old('precio') }}" step="0.01" min="0" required>
         </div>
