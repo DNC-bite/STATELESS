@@ -11,6 +11,7 @@ use App\Http\Controllers\VentaController;
 use App\Http\Controllers\EnvioController;
 use App\Http\Controllers\CarritoController;
 use App\Models\Producto;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/producto/{producto}', [ProductoController::class, 'show'])->name('producto.show');
 
@@ -34,6 +35,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/carrito/eliminar/{item}', [CarritoController::class, 'eliminar'])->name('carrito.eliminar');
     Route::delete('/carrito/vaciar', [CarritoController::class, 'vaciar'])->name('carrito.vaciar');
 }); 
+
+// Checkout
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/procesar', [CheckoutController::class, 'procesar'])->name('checkout.procesar');
+    Route::get('/checkout/factura/{venta}', [CheckoutController::class, 'factura'])->name('checkout.factura');
+    Route::get('/checkout/factura/{venta}/descargar', [CheckoutController::class, 'descargarFactura'])->name('checkout.descargar');
+});
 
 // Dashboard
 Route::get('/dashboard', function () {

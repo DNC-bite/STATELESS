@@ -68,7 +68,7 @@
             <div style="text-align:right;">
                 <p style="font-size:12px; letter-spacing:2px; text-transform:uppercase; opacity:0.5; margin-bottom:8px;">Total</p>
                 <p style="font-family:'Bebas Neue', sans-serif; font-size:40px; letter-spacing:2px;">${{ number_format($carrito->total(), 2) }}</p>
-                <a href="#" class="btn-stateless" style="margin-top:16px;">Proceder al pago</a>
+                <a href="{{ route('checkout.index') }}" class="btn-stateless" style="margin-top:16px;">Proceder al pago</a>
             </div>
         </div>
 
