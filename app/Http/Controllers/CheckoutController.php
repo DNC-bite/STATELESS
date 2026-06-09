@@ -53,6 +53,15 @@ class CheckoutController extends Controller
         return response()->json(['error' => 'Carrito vacío'], 400);
     }
 
+    // Verificar stock antes de procesar
+    foreach ($carrito->items as $item) {
+        if ($item->producto->stock_actual < $item->cantidad) {
+            return response()->json([
+                'error' => 'Stock insuficiente para: ' . $item->producto->nombre
+            ], 400);
+        }
+    }
+
     // Crear venta
     $venta = Venta::create([
         'tipo_venta'  => 'online',
@@ -68,6 +77,11 @@ class CheckoutController extends Controller
         'ciudad'    => $request->ciudad,
         'estado'    => 'pendiente',
     ]);
+
+    // ✅ Descontar stock
+    foreach ($carrito->items as $item) {
+        $item->producto->decrement('stock_actual', $item->cantidad);
+    }
 
     // Vaciar carrito
     $carrito->items()->delete();

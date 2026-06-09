@@ -19,13 +19,9 @@ Route::get('/producto/{producto}', [ProductoController::class, 'show'])->name('p
 Route::get('/', function () {
     $essentials = Producto::where('estado', 'activo')
         ->whereHas('categoria', fn($q) => $q->where('nombre', 'Essentials'))
-        ->take(3)->get();
+        ->get();
 
-    $chromaLife = Producto::where('estado', 'activo')
-        ->whereHas('categoria', fn($q) => $q->where('nombre', 'The Chroma Life'))
-        ->take(3)->get();
-
-    return view('welcome', compact('essentials', 'chromaLife'));
+    return view('welcome', compact('essentials'));
 });
 // Carrito
 Route::middleware('auth')->group(function () {

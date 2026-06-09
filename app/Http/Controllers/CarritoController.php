@@ -22,8 +22,18 @@ class CarritoController extends Controller
 public function agregar(Request $request, $productoId)
 {
     $producto = Producto::findOrFail($productoId);
+
+    // Verificar stock disponible
     $carrito = Carrito::firstOrCreate(['user_id' => Auth::id()]);
     $item = $carrito->items()->where('producto_id', $productoId)->first();
+    $cantidadActual = $item ? $item->cantidad : 0;
+
+    if ($cantidadActual >= $producto->stock_actual) {
+        return response()->json([
+            'success' => false,
+            'mensaje' => 'No hay suficiente stock disponible.',
+        ]);
+    }
 
     if ($item) {
         $item->increment('cantidad');
@@ -45,17 +55,22 @@ public function agregar(Request $request, $productoId)
 
     // Actualizar cantidad
     public function actualizar(Request $request, $itemId)
-    {
-        $item = CarritoItem::findOrFail($itemId);
+{
+    $item = CarritoItem::findOrFail($itemId);
 
-        $request->validate([
-            'cantidad' => 'required|integer|min:1',
-        ]);
+    $request->validate([
+        'cantidad' => 'required|integer|min:1',
+    ]);
 
-        $item->update(['cantidad' => $request->cantidad]);
-
-        return redirect()->route('carrito.index')->with('success', 'Carrito actualizado.');
+    // Verificar stock
+    if ($request->cantidad > $item->producto->stock_actual) {
+        return redirect()->route('carrito.index')->with('error', 'No hay suficiente stock disponible. Stock máximo: ' . $item->producto->stock_actual);
     }
+
+    $item->update(['cantidad' => $request->cantidad]);
+
+    return redirect()->route('carrito.index')->with('success', 'Carrito actualizado.');
+}
 
     // Eliminar item
     public function eliminar($itemId)

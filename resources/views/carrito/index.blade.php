@@ -11,6 +11,11 @@
             {{ session('success') }}
         </div>
     @endif
+    @if(session('error'))
+    <div style="background:#c00; color:#fff; padding:12px 20px; font-size:12px; letter-spacing:1px; margin-bottom:24px;">
+        {{ session('error') }}
+    </div>
+@endif
 
     @if($carrito->items->count() > 0)
 
@@ -38,7 +43,7 @@
                     @csrf
                     @method('PATCH')
                     <button type="submit" name="cantidad" value="{{ $item->cantidad - 1 }}" style="background:#f2f2f2; border:none; width:32px; height:32px; font-size:16px; cursor:pointer;" {{ $item->cantidad <= 1 ? 'disabled' : '' }}>−</button>
-                    <span style="font-size:14px; font-weight:600; width:24px; text-align:center;">{{ $item->cantidad }}</span>
+                    <input type="number" name="cantidad" value="{{ $item->cantidad }}" min="1" style="width:70px; text-align:center; border:1px solid #ddd; padding:6px; font-size:14px; font-weight:600;" onchange="this.form.submit()">
                     <button type="submit" name="cantidad" value="{{ $item->cantidad + 1 }}" style="background:#f2f2f2; border:none; width:32px; height:32px; font-size:16px; cursor:pointer;">+</button>
                 </form>
 
@@ -51,7 +56,7 @@
                 <form action="{{ route('carrito.eliminar', $item) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" style="background:none; border:none; font-size:18px; cursor:pointer; opacity:0.3;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.3">✕</button>
+                    <button type="submit" onclick="return confirm('¿Eliminar {{ $item->producto->nombre }} del carrito?')" style="background:none; border:none; font-size:18px; cursor:pointer; opacity:0.3;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.3">✕</button>
                 </form>
 
             </div>

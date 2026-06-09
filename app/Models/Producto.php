@@ -31,4 +31,8 @@ class Producto extends Model
     {
         return $this->belongsTo(Proveedor::class);
     }
+    public function imagenes()
+{
+    return $this->hasMany(ProductoImagen::class)->orderBy('orden');
+}
 }

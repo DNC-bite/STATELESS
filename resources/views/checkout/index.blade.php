@@ -80,7 +80,12 @@
 
     const form = document.getElementById('checkout-form');
     form.addEventListener('submit', async function(e) {
-        e.preventDefault();
+    e.preventDefault();
+
+    if (!confirm('¿Confirmas tu pedido por ${{ number_format($carrito->total(), 2) }}?')) {
+        return;
+    }
+    // ... resto del código
 
         const btn = document.getElementById('submit-btn');
         btn.disabled = true;
@@ -116,6 +121,8 @@
             }
         }
     });
+
+    
 </script>
 
 @endsection
