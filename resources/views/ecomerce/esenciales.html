@@ -1,0 +1,93 @@
+
+
+raw
+Index · HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STATELESS – Wireframe</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+ 
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <span class="navbar__logo">STATELESS</span>
+    <nav class="navbar__links">
+      <a href="#">Inicio</a>
+      <a href="#">Essentials</a>
+      <a href="#">The Chroma</a>
+      <a href="#">Life</a>
+    </nav>
+    <div class="navbar__icons">
+      <div class="icon-box" aria-label="Cuenta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </div>
+      <div class="icon-box" aria-label="Carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+      </div>
+    </div>
+  </header>
+ 
+  <!-- HERO BANNER -->
+  <section class="hero">
+    <img src="hero.jpg" alt="Hero banner" class="hero__img" />
+  </section>
+ 
+  <!-- PRODUCTS SECTION -->
+  <section class="products">
+    <div class="products__header">
+      <h2 class="products__title">ESSENTIAL</h2>
+      <div class="products__filter">
+        <span>Precio</span>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polyline points="4 6 8 10 12 6"/>
+        </svg>
+      </div>
+    </div>
+ 
+    <!-- GRID -->
+    <div class="products__grid">
+ 
+      <!-- Fila 1: cards cuadradas con descripción -->
+      <div class="card">
+        <img src="product-1.jpg" alt="Producto 1" class="card__img card__img--square" />
+        <p class="card__desc">Descripción muy corta mas precio</p>
+      </div>
+ 
+      <div class="card">
+        <img src="product-2.jpg" alt="Producto 2" class="card__img card__img--square" />
+        <p class="card__desc">Descripción muy corta mas precio</p>
+      </div>
+ 
+      <div class="card">
+        <img src="product-3.jpg" alt="Producto 3" class="card__img card__img--square" />
+        <p class="card__desc">Descripción muy corta mas precio</p>
+      </div>
+ 
+      <!-- Fila 2: cards horizontales sin descripción -->
+      <div class="card">
+        <img src="product-4.jpg" alt="Producto 4" class="card__img card__img--wide" />
+      </div>
+ 
+      <div class="card">
+        <img src="product-5.jpg" alt="Producto 5" class="card__img card__img--wide" />
+      </div>
+ 
+      <div class="card">
+        <img src="product-6.jpg" alt="Producto 6" class="card__img card__img--wide" />
+      </div>
+ 
+    </div>
+  </section>
+ 
+</body>
+</html>
