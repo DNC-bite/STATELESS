@@ -10,11 +10,28 @@ use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
-    public function index()
-    {
-        $productos = Producto::with(['categoria', 'proveedor'])->get();
-        return view('admin.productos.index', compact('productos'));
+    public function index(Request $request)
+{
+    $query = Producto::with(['categoria', 'proveedor']);
+
+    switch($request->filtro) {
+        case 'stock_bajo':
+            $query->whereColumn('stock_actual', '<=', 'stock_minimo');
+            break;
+        case 'sin_stock':
+            $query->where('stock_actual', 0);
+            break;
+        case 'activo':
+            $query->where('estado', 'activo');
+            break;
+        case 'inactivo':
+            $query->where('estado', 'inactivo');
+            break;
     }
+
+    $productos = $query->get();
+    return view('admin.productos.index', compact('productos'));
+}
 
     public function create()
     {

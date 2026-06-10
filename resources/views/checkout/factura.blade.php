@@ -54,6 +54,38 @@
                     <td style="padding:14px 0; font-size:13px; text-align:right; font-weight:600;">${{ number_format($venta->total, 2) }}</td>
                 </tr>
             </tbody>
+            <!-- Código Efecty -->
+@if($venta->metodo_pago === 'efecty' && $venta->codigo_pago)
+<div style="background:#fff3cd; border:1px solid #ffc107; padding:20px; margin-bottom:24px;">
+    <p style="font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; margin-bottom:8px;">⚠️ PENDIENTE DE PAGO</p>
+    <p style="font-size:13px; margin-bottom:12px;">Tu pedido está reservado. Tienes <strong>48 horas</strong> para realizar el pago en cualquier punto Efecty.</p>
+    <div style="background:#000; color:#fff; padding:16px; text-align:center;">
+        <p style="font-size:11px; letter-spacing:2px; opacity:0.6; margin-bottom:4px;">TU CÓDIGO DE PAGO</p>
+        <p style="font-family:'Bebas Neue', sans-serif; font-size:36px; letter-spacing:6px;">{{ $venta->codigo_pago }}</p>
+    </div>
+    <p style="font-size:11px; opacity:0.5; margin-top:12px;">Presenta este código en cualquier punto Efecty del país.</p>
+</div>
+@endif
+
+<!-- PSE -->
+@if($venta->metodo_pago === 'pse')
+<div style="background:#e8f4fd; border:1px solid #0066cc; padding:20px; margin-bottom:24px;">
+    <p style="font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; margin-bottom:8px;">🏦 PAGO PSE</p>
+    <p style="font-size:13px; margin-bottom:8px;">Tu pago está siendo procesado a través de PSE.</p>
+    <p style="font-size:12px; opacity:0.6;">Referencia: <strong>PSE-{{ str_pad($venta->id, 8, '0', STR_PAD_LEFT) }}</strong></p>
+    <p style="font-size:11px; opacity:0.5; margin-top:8px;">Recibirás una confirmación por correo electrónico.</p>
+</div>
+@endif
+
+<!-- Nequi -->
+@if($venta->metodo_pago === 'nequi')
+<div style="background:#f0f0ff; border:1px solid #6600cc; padding:20px; margin-bottom:24px;">
+    <p style="font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; margin-bottom:8px;">📱 PAGO NEQUI</p>
+    <p style="font-size:13px; margin-bottom:8px;">Tu pago está siendo procesado a través de Nequi.</p>
+    <p style="font-size:12px; opacity:0.6;">Referencia: <strong>NEQ-{{ str_pad($venta->id, 8, '0', STR_PAD_LEFT) }}</strong></p>
+    <p style="font-size:11px; opacity:0.5; margin-top:8px;">Revisa las notificaciones en tu app Nequi.</p>
+</div>
+@endif
             <tfoot>
                 <tr>
                     <td style="padding:16px 0; font-family:'Bebas Neue', sans-serif; font-size:20px; letter-spacing:2px;">TOTAL</td>

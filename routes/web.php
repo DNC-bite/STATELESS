@@ -39,6 +39,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout/factura/{venta}', [CheckoutController::class, 'factura'])->name('checkout.factura');
     Route::get('/checkout/factura/{venta}/descargar', [CheckoutController::class, 'descargarFactura'])->name('checkout.descargar');
 });
+// Ruta PSE
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout/pse/{venta}', [CheckoutController::class, 'pse'])->name('checkout.pse');
+    Route::post('/checkout/pse/{venta}/confirmar', [CheckoutController::class, 'confirmarPse'])->name('checkout.pse.confirmar');
+});
 
 // Dashboard
 Route::get('/dashboard', function () {

@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
         $table->string('tipo_venta'); // online, fisica
         $table->string('metodo_pago');
-        $table->decimal('total', 10, 2);
+        $table->decimal('total', 15, 2);
         $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         $table->timestamps();
     });

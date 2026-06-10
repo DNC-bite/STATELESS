@@ -52,13 +52,10 @@
             <p style="font-size:14px; line-height:1.8; opacity:0.7; margin-bottom:32px;">{{ $producto->descripcion }}</p>
 
             @if(Auth::check())
-                <form action="{{ route('carrito.agregar', $producto) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn-stateless" style="width:100%; padding:16px; font-size:13px;">Añadir al carrito</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="btn-stateless" style="width:100%; padding:16px; font-size:13px; text-align:center; display:block;">Iniciar sesión para comprar</a>
-            @endif
+    <button onclick="agregarAlCarritoShow({{ $producto->id }}, this)" class="btn-stateless" style="width:100%; padding:16px; font-size:13px;">Añadir al carrito</button>
+@else
+    <a href="{{ route('login') }}" class="btn-stateless" style="width:100%; padding:16px; font-size:13px; text-align:center; display:block;">Iniciar sesión para comprar</a>
+@endif
 
             <!-- Info extra -->
             <div style="margin-top:32px; padding-top:24px; border-top:1px solid #eee;">
@@ -104,6 +101,44 @@ function actualizarProductoCarrusel() {
     document.getElementById('producto-carousel').style.transform = `translateX(-${productoIndex * 100}%)`;
     document.querySelectorAll('.pdot').forEach((dot, i) => {
         dot.style.opacity = i === productoIndex ? '1' : '0.4';
+    });
+}
+</script>
+<script>
+function agregarAlCarritoShow(productoId, btn) {
+    btn.disabled = true;
+    btn.textContent = 'Agregando...';
+
+    fetch(`/carrito/agregar/${productoId}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            btn.textContent = '✓ Agregado';
+            let contador = document.getElementById('carrito-contador');
+            if (contador) {
+                contador.textContent = data.cantidad;
+                contador.style.display = 'flex';
+            }
+        } else {
+            btn.textContent = data.mensaje;
+            btn.style.opacity = '0.5';
+        }
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.textContent = 'Añadir al carrito';
+            btn.style.opacity = '1';
+        }, 2000);
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.textContent = 'Añadir al carrito';
     });
 }
 </script>

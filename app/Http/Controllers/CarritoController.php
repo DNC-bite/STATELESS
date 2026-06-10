@@ -59,19 +59,23 @@ public function agregar(Request $request, $productoId)
     $item = CarritoItem::findOrFail($itemId);
 
     $request->validate([
-        'cantidad' => 'required|integer|min:1',
+        'cantidad' => 'required|integer|min:0',
     ]);
+
+    // Si cantidad es 0, eliminar el item
+    if ($request->cantidad <= 0) {
+        $item->delete();
+        return redirect()->route('carrito.index')->with('success', 'Producto eliminado del carrito.');
+    }
 
     // Verificar stock
     if ($request->cantidad > $item->producto->stock_actual) {
-        return redirect()->route('carrito.index')->with('error', 'No hay suficiente stock disponible. Stock máximo: ' . $item->producto->stock_actual);
+        return redirect()->route('carrito.index')->with('error', 'No hay suficiente stock. Máximo: ' . $item->producto->stock_actual);
     }
 
     $item->update(['cantidad' => $request->cantidad]);
-
     return redirect()->route('carrito.index')->with('success', 'Carrito actualizado.');
 }
-
     // Eliminar item
     public function eliminar($itemId)
     {

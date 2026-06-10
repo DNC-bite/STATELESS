@@ -42,9 +42,13 @@
                 <form action="{{ route('carrito.actualizar', $item) }}" method="POST" style="display:flex; align-items:center; gap:8px;">
                     @csrf
                     @method('PATCH')
-                    <button type="submit" name="cantidad" value="{{ $item->cantidad - 1 }}" style="background:#f2f2f2; border:none; width:32px; height:32px; font-size:16px; cursor:pointer;" {{ $item->cantidad <= 1 ? 'disabled' : '' }}>−</button>
-                    <input type="number" name="cantidad" value="{{ $item->cantidad }}" min="1" style="width:70px; text-align:center; border:1px solid #ddd; padding:6px; font-size:14px; font-weight:600;" onchange="this.form.submit()">
-                    <button type="submit" name="cantidad" value="{{ $item->cantidad + 1 }}" style="background:#f2f2f2; border:none; width:32px; height:32px; font-size:16px; cursor:pointer;">+</button>
+                    <input type="hidden" name="cantidad" id="cantidad-{{ $item->id }}" value="{{ $item->cantidad }}">
+                    
+                    <button type="submit" onclick="document.getElementById('cantidad-{{ $item->id }}').value={{ $item->cantidad - 1 }}" style="background:#f2f2f2; border:none; width:32px; height:32px; font-size:16px; cursor:pointer; {{ $item->cantidad <= 1 ? 'opacity:0.3;' : '' }}">−</button>
+                    
+                    <input type="number" value="{{ $item->cantidad }}" min="1" style="width:70px; text-align:center; border:1px solid #ddd; padding:6px; font-size:14px; font-weight:600;" onchange="document.getElementById('cantidad-{{ $item->id }}').value=this.value; this.form.submit()">
+                    
+                    <button type="submit" onclick="document.getElementById('cantidad-{{ $item->id }}').value={{ $item->cantidad + 1 }}" style="background:#f2f2f2; border:none; width:32px; height:32px; font-size:16px; cursor:pointer;">+</button>
                 </form>
 
                 <!-- Subtotal -->
