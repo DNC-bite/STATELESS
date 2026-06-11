@@ -27,6 +27,22 @@
         </div>
         <button type="submit" class="btn btn-primary w-100">Ingresar</button>
     </form>
+    {{-- Alerta si no verificó el email --}}
+@if(session('email_no_verificado'))
+<div class="alert alert-warning d-flex justify-content-between align-items-center mt-2">
+    <span>Cuenta sin verificar.</span>
+    <form action="{{ route('verification.send') }}" method="POST" class="m-0">
+        @csrf
+        <button class="btn btn-sm btn-warning">Reenviar correo</button>
+    </form>
+</div>
+@endif
+
+{{-- Enlace olvidaste contraseña --}}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <label class="form-label mb-0">Contraseña</label>
+    <a href="{{ route('password.request') }}" class="small text-muted">¿Olvidaste tu contraseña?</a>
+</div>
 
     <div class="mt-3 text-center">
         <span>¿No tienes cuenta?</span>
