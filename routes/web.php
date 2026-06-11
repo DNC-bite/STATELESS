@@ -11,6 +11,7 @@ use App\Http\Controllers\VentaController;
 use App\Http\Controllers\EnvioController;
 use App\Http\Controllers\CarritoController;
 use App\Models\Producto;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/producto/{producto}', [ProductoController::class, 'show'])->name('producto.show');
 
@@ -18,13 +19,9 @@ Route::get('/producto/{producto}', [ProductoController::class, 'show'])->name('p
 Route::get('/', function () {
     $essentials = Producto::where('estado', 'activo')
         ->whereHas('categoria', fn($q) => $q->where('nombre', 'Essentials'))
-        ->take(3)->get();
+        ->get();
 
-    $chromaLife = Producto::where('estado', 'activo')
-        ->whereHas('categoria', fn($q) => $q->where('nombre', 'The Chroma Life'))
-        ->take(3)->get();
-
-    return view('welcome', compact('essentials', 'chromaLife'));
+    return view('welcome', compact('essentials'));
 });
 // Carrito
 Route::middleware('auth')->group(function () {
@@ -34,6 +31,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/carrito/eliminar/{item}', [CarritoController::class, 'eliminar'])->name('carrito.eliminar');
     Route::delete('/carrito/vaciar', [CarritoController::class, 'vaciar'])->name('carrito.vaciar');
 }); 
+
+// Checkout
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/procesar', [CheckoutController::class, 'procesar'])->name('checkout.procesar');
+    Route::get('/checkout/factura/{venta}', [CheckoutController::class, 'factura'])->name('checkout.factura');
+    Route::get('/checkout/factura/{venta}/descargar', [CheckoutController::class, 'descargarFactura'])->name('checkout.descargar');
+});
+// Ruta PSE
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout/pse/{venta}', [CheckoutController::class, 'pse'])->name('checkout.pse');
+    Route::post('/checkout/pse/{venta}/confirmar', [CheckoutController::class, 'confirmarPse'])->name('checkout.pse.confirmar');
+});
 
 // Dashboard
 Route::get('/dashboard', function () {

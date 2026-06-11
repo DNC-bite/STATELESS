@@ -45,6 +45,14 @@
             <th>Acciones</th>
         </tr>
     </thead>
+    <!-- FILTROS -->
+<div style="display:flex; gap:12px; margin-bottom:24px;">
+    <a href="{{ route('productos.index') }}" class="{{ !request('filtro') ? 'btn-sl' : 'btn-sl-outline' }}">Todos</a>
+    <a href="{{ route('productos.index', ['filtro' => 'stock_bajo']) }}" class="{{ request('filtro') == 'stock_bajo' ? 'btn-sl' : 'btn-sl-outline' }}">Stock Bajo</a>
+    <a href="{{ route('productos.index', ['filtro' => 'sin_stock']) }}" class="{{ request('filtro') == 'sin_stock' ? 'btn-sl' : 'btn-sl-outline' }}">Sin Stock</a>
+    <a href="{{ route('productos.index', ['filtro' => 'activo']) }}" class="{{ request('filtro') == 'activo' ? 'btn-sl' : 'btn-sl-outline' }}">Activos</a>
+    <a href="{{ route('productos.index', ['filtro' => 'inactivo']) }}" class="{{ request('filtro') == 'inactivo' ? 'btn-sl' : 'btn-sl-outline' }}">Inactivos</a>
+</div>
     <tbody>
         @forelse($productos as $producto)
         <tr>
@@ -52,7 +60,7 @@
             <td>{{ $producto->id }}</td>
             <td>
     @if($producto->imagen)
-        <img src="{{ $producto->imagen }}" style="width:50px; height:60px; object-fit:cover;">
+        <img src="{{ asset('images/' . $producto->imagen) }}" style="width:50px; height:60px; object-fit:cover;">
     @else
         <div style="width:50px; height:60px; background:#f2f2f2;"></div>
     @endif

@@ -5,13 +5,44 @@
 <!-- DETALLE PRODUCTO -->
 <section style="padding: 80px 60px; max-width:1200px; margin:0 auto;">
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;">
+<!-- CARRUSEL DE IMÁGENES -->
+<div style="position:relative; overflow:hidden;">
+    <div id="producto-carousel" style="display:flex; transition:transform 0.4s ease;">
+        
+        <!-- Imagen principal -->
+        <div style="min-width:100%; flex-shrink:0;">
+            @if($producto->imagen)
+                <img src="{{ asset('images/' . $producto->imagen) }}" style="width:100%; height:600px; object-fit:cover;">
+            @else
+                <div style="background:#f2f2f2; width:100%; height:600px;"></div>
+            @endif
+        </div>
 
-        <!-- IMAGEN -->
-        @if($producto->imagen)
-    <img src="{{ asset('images/' . $producto->imagen) }}" style="width:100%; aspect-ratio:3/4; object-fit:cover;">
-@else
-    <div style="background:#f2f2f2; aspect-ratio:3/4;"></div>
-@endif
+        <!-- Imágenes adicionales -->
+        @foreach($producto->imagenes as $img)
+        <div style="min-width:100%; flex-shrink:0;">
+            <img src="{{ asset('images/' . $img->imagen) }}" style="width:100%; height:600px; object-fit:cover;">
+        </div>
+        @endforeach
+
+    </div>
+
+    <!-- Botones -->
+    @if($producto->imagenes->count() > 0)
+    <button onclick="moverProducto(-1)" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:#fff; border:none; width:40px; height:40px; font-size:20px; cursor:pointer;">‹</button>
+    <button onclick="moverProducto(1)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:#fff; border:none; width:40px; height:40px; font-size:20px; cursor:pointer;">›</button>
+    @endif
+
+    <!-- Dots -->
+    @if($producto->imagenes->count() > 0)
+    <div style="position:absolute; bottom:16px; left:50%; transform:translateX(-50%); display:flex; gap:8px;">
+        <span class="pdot active" onclick="irAImagenProducto(0)" style="width:8px; height:8px; border-radius:50%; background:#fff; cursor:pointer; opacity:1;"></span>
+        @foreach($producto->imagenes as $i => $img)
+        <span class="pdot" onclick="irAImagenProducto({{ $i + 1 }})" style="width:8px; height:8px; border-radius:50%; background:#fff; cursor:pointer; opacity:0.4;"></span>
+        @endforeach
+    </div>
+    @endif
+</div>
 
         <!-- INFO -->
         <div>
@@ -21,13 +52,10 @@
             <p style="font-size:14px; line-height:1.8; opacity:0.7; margin-bottom:32px;">{{ $producto->descripcion }}</p>
 
             @if(Auth::check())
-                <form action="{{ route('carrito.agregar', $producto) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn-stateless" style="width:100%; padding:16px; font-size:13px;">Añadir al carrito</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="btn-stateless" style="width:100%; padding:16px; font-size:13px; text-align:center; display:block;">Iniciar sesión para comprar</a>
-            @endif
+    <button onclick="agregarAlCarritoShow({{ $producto->id }}, this)" class="btn-stateless" style="width:100%; padding:16px; font-size:13px;">Añadir al carrito</button>
+@else
+    <a href="{{ route('login') }}" class="btn-stateless" style="width:100%; padding:16px; font-size:13px; text-align:center; display:block;">Iniciar sesión para comprar</a>
+@endif
 
             <!-- Info extra -->
             <div style="margin-top:32px; padding-top:24px; border-top:1px solid #eee;">
@@ -55,5 +83,63 @@
     </div>
 </section>
 @endif
+<script>
+let productoIndex = 0;
+const totalImagenes = {{ $producto->imagenes->count() + 1 }};
 
+function moverProducto(dir) {
+    productoIndex = (productoIndex + dir + totalImagenes) % totalImagenes;
+    actualizarProductoCarrusel();
+}
+
+function irAImagenProducto(index) {
+    productoIndex = index;
+    actualizarProductoCarrusel();
+}
+
+function actualizarProductoCarrusel() {
+    document.getElementById('producto-carousel').style.transform = `translateX(-${productoIndex * 100}%)`;
+    document.querySelectorAll('.pdot').forEach((dot, i) => {
+        dot.style.opacity = i === productoIndex ? '1' : '0.4';
+    });
+}
+</script>
+<script>
+function agregarAlCarritoShow(productoId, btn) {
+    btn.disabled = true;
+    btn.textContent = 'Agregando...';
+
+    fetch(`/carrito/agregar/${productoId}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            btn.textContent = '✓ Agregado';
+            let contador = document.getElementById('carrito-contador');
+            if (contador) {
+                contador.textContent = data.cantidad;
+                contador.style.display = 'flex';
+            }
+        } else {
+            btn.textContent = data.mensaje;
+            btn.style.opacity = '0.5';
+        }
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.textContent = 'Añadir al carrito';
+            btn.style.opacity = '1';
+        }, 2000);
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.textContent = 'Añadir al carrito';
+    });
+}
+</script>
 @endsection

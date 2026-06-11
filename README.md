@@ -57,3 +57,163 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+
+# STATELESS — Proyecto Académico SENA ADSO
+
+Marca ficticia de ropa urbana colombiana desarrollada como proyecto de clase en SENA (Análisis y Desarrollo de Software). No es una marca real.
+
+---
+
+## Stack Tecnológico
+
+- **Backend:** Laravel 12 / PHP 8.2
+- **Base de datos:** MySQL
+- **Frontend:** Blade + Bootstrap 5 + CSS personalizado
+- **Pagos:** Stripe (modo test) + métodos colombianos simulados (Nequi, PSE, Efecty)
+- **PDF:** barryvdh/laravel-dompdf
+- **Servidor local:** XAMPP (PHP 8.2 en `C:\xampp82\php\php.exe`)
+
+---
+
+## Comandos importantes
+
+```bash
+# Levantar servidor
+C:\xampp82\php\php.exe artisan serve
+
+# Instalar dependencias
+C:\xampp82\php\php.exe C:\xampp82\php\composer require [paquete]
+
+# Migraciones
+C:\xampp82\php\php.exe artisan migrate
+C:\xampp82\php\php.exe artisan migrate:fresh --seed
+
+# Limpiar caché
+C:\xampp82\php\php.exe artisan config:clear
+C:\xampp82\php\php.exe artisan cache:clear
+```
+
+---
+
+## Base de datos
+
+- **Nombre:** `stateless`
+- **Motor:** MySQL vía XAMPP
+- **OJO:** El `.env` debe tener `DB_CONNECTION=mysql` y `DB_DATABASE=stateless`. Si dice `sqlite` hay que corregirlo.
+
+---
+
+## Roles
+
+| Rol | Acceso |
+|-----|--------|
+| `admin` | Panel completo — ventas, usuarios, inventario, productos, categorías, proveedores, envíos |
+| `empleado` | Panel limitado — ventas, inventario, envíos, proveedores |
+| `cliente` | Tienda pública, carrito, checkout |
+
+**Credenciales de prueba:**
+- Email: `admin@example.com`
+- Contraseña: `password`
+
+---
+
+## Estructura de rutas
+
+| Ruta | Descripción |
+|------|-------------|
+| `/` | Página de inicio (tienda pública) |
+| `/login` | Inicio de sesión |
+| `/register` | Registro de clientes |
+| `/account` | Mi Cuenta (hub por rol) |
+| `/carrito` | Carrito de compras |
+| `/checkout` | Checkout con Stripe |
+| `/checkout/pse/{venta}` | Portal PSE simulado |
+| `/checkout/factura/{venta}` | Factura electrónica |
+| `/admin/categorias` | CRUD categorías |
+| `/admin/productos` | CRUD productos |
+| `/admin/proveedores` | CRUD proveedores |
+| `/admin/ventas` | CRUD ventas |
+| `/admin/envios` | CRUD envíos |
+| `/admin/usuarios` | CRUD usuarios |
+| `/empleado/ventas` | Ventas (empleado) |
+| `/empleado/inventarios` | Inventario (empleado) |
+| `/empleado/envios` | Envíos (empleado) |
+| `/empleado/proveedores` | Proveedores (empleado) |
+
+---
+
+## Modelos y relaciones
+
+- `User` → belongsTo `Role`
+- `Role` → hasMany `User`
+- `Producto` → belongsTo `Categoria`, belongsTo `Proveedor`, hasMany `ProductoImagen`
+- `Carrito` → belongsTo `User`, hasMany `CarritoItem`
+- `CarritoItem` → belongsTo `Carrito`, belongsTo `Producto`
+- `Venta` → belongsTo `User`, hasOne `Envio`
+- `Envio` → belongsTo `Venta`
+
+---
+
+## Módulos implementados
+
+### Tienda pública
+- Hero carrusel (3 slides con autoplay)
+- Sección Essentials con carrusel de productos
+- Carrito persistente en BD con AJAX
+- Contador de carrito en navbar en tiempo real
+- Detalle de producto con carrusel de imágenes múltiples
+
+### Checkout
+- Stripe (tarjeta débito/crédito en modo test)
+- Nequi simulado
+- PSE simulado con portal bancario falso
+- Efecty simulado con código de pago generado
+- Generación de factura electrónica PDF descargable
+- Descuento automático de stock al confirmar pedido
+
+### Panel Admin
+- Dashboard con acceso por rol
+- CRUD completo: Categorías, Proveedores, Productos, Ventas, Envíos, Usuarios
+- Filtros en productos: Todos, Stock Bajo, Sin Stock, Activos, Inactivos
+- Imágenes de productos desde `public/images/`
+
+### Panel Empleado
+- Ventas, Inventario, Envíos, Proveedores
+- Sidebar dinámico según rol
+
+---
+
+## Imágenes de productos
+
+Las imágenes se guardan en `public/images/`. En el panel admin se escribe el nombre del archivo (ej. `camiseta-negra.jpg`). Así funcionan en GitHub sin problemas.
+
+---
+
+## Variables de entorno importantes (.env)
+
+```env
+DB_CONNECTION=mysql
+DB_DATABASE=stateless
+DB_USERNAME=root
+DB_PASSWORD=
+
+STRIPE_KEY=pk_test_...
+STRIPE_SECRET=sk_test_...
+```
+
+---
+
+## Rama de desarrollo
+
+- Rama principal: `santi-feature`
+- Convención de commits: `tipo(alcance): descripción`
+
+---
+
+## Notas importantes
+
+- Laravel pluraliza en inglés — modelos con nombres en español necesitan `protected $table = 'nombre_tabla'` (ej. `Proveedor` → `proveedores`, `ProductoImagen` → `producto_imagenes`)
+- El middleware de roles está en `app/Http/Middleware/RoleMiddleware.php` y se registra en `bootstrap/app.php`
+- En Laravel 12 no existe `Kernel.php` — el middleware se registra con `$middleware->alias()` en `bootstrap/app.php`
