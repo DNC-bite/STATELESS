@@ -51,10 +51,9 @@
 
                 <!-- Panel Tarjeta -->
                 <div id="panel-tarjeta">
-                    <div style="margin-bottom:16px;">
-                        <label style="font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; display:block; margin-bottom:8px;">Datos de tarjeta</label>
-                        <div id="card-element" style="border:1px solid #ddd; padding:12px 16px;"></div>
-                        <div id="card-errors" style="color:#c00; font-size:12px; margin-top:8px;"></div>
+                    <div style="background:#f9f9f9; border:1px solid #eee; padding:20px; margin-bottom:16px;">
+                        <p style="font-size:13px; font-weight:600; margin-bottom:8px;">Pagar con Tarjeta</p>
+                        <p style="font-size:13px; opacity:0.7;">Serás redirigido a Mercado Pago para completar tu pago de forma segura.</p>
                     </div>
                 </div>
 
@@ -62,8 +61,7 @@
                 <div id="panel-nequi" style="display:none;">
                     <div style="background:#f9f9f9; border:1px solid #eee; padding:20px; margin-bottom:16px;">
                         <p style="font-size:13px; font-weight:600; margin-bottom:8px;">Pagar con Nequi</p>
-                        <input type="tel" id="telefono-nequi" placeholder="Número de celular Nequi" style="width:100%; border:1px solid #ddd; padding:12px 16px; font-size:13px; outline:none;">
-                        <p style="font-size:11px; opacity:0.5; margin-top:8px;">Recibirás una notificación en tu app Nequi</p>
+                        <p style="font-size:13px; opacity:0.7;">Serás redirigido a Mercado Pago donde podrás seleccionar Nequi como método de pago.</p>
                     </div>
                 </div>
 
@@ -71,16 +69,7 @@
                 <div id="panel-pse" style="display:none;">
                     <div style="background:#f9f9f9; border:1px solid #eee; padding:20px; margin-bottom:16px;">
                         <p style="font-size:13px; font-weight:600; margin-bottom:8px;">Pagar con PSE</p>
-                        <select style="width:100%; border:1px solid #ddd; padding:12px 16px; font-size:13px; outline:none; margin-bottom:8px;">
-                            <option>Selecciona tu banco</option>
-                            <option>Bancolombia</option>
-                            <option>Banco de Bogotá</option>
-                            <option>Davivienda</option>
-                            <option>BBVA</option>
-                            <option>Banco Popular</option>
-                            <option>Scotiabank Colpatria</option>
-                        </select>
-                        <p style="font-size:11px; opacity:0.5;">Serás redirigido al portal de tu banco</p>
+                        <p style="font-size:13px; opacity:0.7;">Serás redirigido a Mercado Pago donde podrás seleccionar PSE como método de pago.</p>
                     </div>
                 </div>
 
@@ -88,10 +77,11 @@
                 <div id="panel-efecty" style="display:none;">
                     <div style="background:#f9f9f9; border:1px solid #eee; padding:20px; margin-bottom:16px;">
                         <p style="font-size:13px; font-weight:600; margin-bottom:8px;">Pagar con Efecty</p>
-                        <p style="font-size:13px; opacity:0.7; margin-bottom:8px;">Recibirás un código de pago para realizar en cualquier punto Efecty.</p>
-                        <p style="font-size:12px; opacity:0.5;">Tienes 48 horas para realizar el pago.</p>
+                        <p style="font-size:13px; opacity:0.7;">Serás redirigido a Mercado Pago donde podrás obtener tu código de pago Efecty.</p>
                     </div>
                 </div>
+
+                <div id="form-error" style="color:#c00; font-size:12px; margin-bottom:12px; display:none;"></div>
 
                 <button type="submit" id="submit-btn" class="btn-stateless" style="width:100%; padding:16px; font-size:13px;">
                     Pagar ${{ number_format($carrito->total(), 2) }} COP
@@ -120,19 +110,7 @@
     </div>
 </section>
 
-<script src="https://js.stripe.com/v3/"></script>
 <script>
-    const stripe = Stripe('{{ $stripeKey }}');
-    const elements = stripe.elements();
-    const cardElement = elements.create('card', {
-        style: { base: { fontSize: '13px', fontFamily: 'Inter, sans-serif', color: '#000' } }
-    });
-    cardElement.mount('#card-element');
-
-    cardElement.on('change', function(event) {
-        document.getElementById('card-errors').textContent = event.error ? event.error.message : '';
-    });
-
     let metodoSeleccionado = 'tarjeta';
 
     function seleccionarMetodo(metodo) {
@@ -151,50 +129,45 @@
         if (!confirm('¿Confirmas tu pedido por ${{ number_format($carrito->total(), 2) }} COP?')) return;
 
         const btn = document.getElementById('submit-btn');
+        const errorDiv = document.getElementById('form-error');
+
         btn.disabled = true;
         btn.textContent = 'Procesando...';
+        errorDiv.style.display = 'none';
 
-        if (metodoSeleccionado === 'tarjeta') {
-            const { paymentIntent, error } = await stripe.confirmCardPayment('{{ $clientSecret }}', {
-                payment_method: { card: cardElement }
+        try {
+            const response = await fetch('{{ route("checkout.procesar") }}', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    direccion: document.getElementById('direccion').value,
+                    ciudad: document.getElementById('ciudad').value,
+                    metodo_pago: metodoSeleccionado,
+                })
             });
 
-            if (error) {
-                document.getElementById('card-errors').textContent = error.message;
+            const data = await response.json();
+
+            if (data.init_point) {
+                window.location.href = data.init_point;
+            } else {
+                errorDiv.textContent = data.error || 'Error al procesar el pago.';
+                errorDiv.style.display = 'block';
                 btn.disabled = false;
                 btn.textContent = 'Pagar ${{ number_format($carrito->total(), 2) }} COP';
-                return;
             }
-
-            await procesarPedido(paymentIntent.id, metodoSeleccionado);
-        } else {
-            // Para Nequi, PSE y Efecty — simular pago exitoso
-            await procesarPedido('sim_' + Date.now(), metodoSeleccionado);
+        } catch (err) {
+            errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+            errorDiv.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Pagar ${{ number_format($carrito->total(), 2) }} COP';
         }
     });
-
-    async function procesarPedido(paymentIntentId, metodo) {
-        const response = await fetch('{{ route("checkout.procesar") }}', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                direccion: document.getElementById('direccion').value,
-                ciudad: document.getElementById('ciudad').value,
-                payment_intent_id: paymentIntentId,
-                metodo_pago: metodo,
-            })
-        });
-
-        const data = await response.json();
-        if (data.redirect) {
-            window.location.href = data.redirect;
-        }
-    }
 </script>
 
 @endsection

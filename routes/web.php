@@ -23,6 +23,7 @@ Route::get('/', function () {
 
     return view('welcome', compact('essentials'));
 });
+
 // Carrito
 Route::middleware('auth')->group(function () {
     Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
@@ -30,20 +31,20 @@ Route::middleware('auth')->group(function () {
     Route::patch('/carrito/actualizar/{item}', [CarritoController::class, 'actualizar'])->name('carrito.actualizar');
     Route::delete('/carrito/eliminar/{item}', [CarritoController::class, 'eliminar'])->name('carrito.eliminar');
     Route::delete('/carrito/vaciar', [CarritoController::class, 'vaciar'])->name('carrito.vaciar');
-}); 
+});
 
-// Checkout
+// Checkout (requiere auth)
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/procesar', [CheckoutController::class, 'procesar'])->name('checkout.procesar');
     Route::get('/checkout/factura/{venta}', [CheckoutController::class, 'factura'])->name('checkout.factura');
     Route::get('/checkout/factura/{venta}/descargar', [CheckoutController::class, 'descargarFactura'])->name('checkout.descargar');
+    Route::get('/checkout/exito', [CheckoutController::class, 'exito'])->name('checkout.exito');
+    Route::get('/checkout/pendiente', [CheckoutController::class, 'pendiente'])->name('checkout.pendiente');
 });
-// Ruta PSE
-Route::middleware('auth')->group(function () {
-    Route::get('/checkout/pse/{venta}', [CheckoutController::class, 'pse'])->name('checkout.pse');
-    Route::post('/checkout/pse/{venta}/confirmar', [CheckoutController::class, 'confirmarPse'])->name('checkout.pse.confirmar');
-});
+
+// Webhook Mercado Pago (sin auth, sin CSRF)
+Route::post('/checkout/webhook', [CheckoutController::class, 'webhook'])->name('checkout.webhook');
 
 // Dashboard
 Route::get('/dashboard', function () {

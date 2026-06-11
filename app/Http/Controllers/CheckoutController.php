@@ -7,9 +7,11 @@ use App\Models\Venta;
 use App\Models\Envio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Stripe\Stripe;
-use Stripe\PaymentIntent;
+use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
+use MercadoPago\Client\Preference\PreferenceClient;
+use MercadoPago\Client\Payment\PaymentClient;
+use MercadoPago\MercadoPagoConfig;
 
 class CheckoutController extends Controller
 {
@@ -20,98 +22,162 @@ class CheckoutController extends Controller
             ->first();
 
         if (!$carrito || $carrito->items->isEmpty()) {
-            return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
+            return redirect()->route('carrito.index')
+                ->with('error', 'Tu carrito está vacío.');
         }
 
-        Stripe::setApiKey(config('services.stripe.secret'));
-
-        $paymentIntent = PaymentIntent::create([
-            'amount'   => $carrito->total() * 100,
-            'currency' => 'usd',
-        ]);
-
         return view('checkout.index', [
-            'carrito'      => $carrito,
-            'clientSecret' => $paymentIntent->client_secret,
-            'stripeKey'    => config('services.stripe.key'),
+            'carrito' => $carrito,
         ]);
     }
 
     public function procesar(Request $request)
-{
-    $request->validate([
-        'direccion'         => 'required|string|max:255',
-        'ciudad'            => 'required|string|max:100',
-        'payment_intent_id' => 'required|string',
-    ]);
+    {
+        $request->validate([
+            'direccion'    => 'required|string|max:255',
+            'ciudad'       => 'required|string|max:100',
+            'metodo_pago'  => 'required|string',
+        ]);
 
-    $carrito = Carrito::with('items.producto')
-        ->where('user_id', Auth::id())
-        ->first();
+        $carrito = Carrito::with('items.producto')
+            ->where('user_id', Auth::id())
+            ->first();
 
-    if (!$carrito || $carrito->items->isEmpty()) {
-        return response()->json(['error' => 'Carrito vacío'], 400);
-    }
-
-    // Verificar stock
-    foreach ($carrito->items as $item) {
-        if ($item->producto->stock_actual < $item->cantidad) {
-            return response()->json([
-                'error' => 'Stock insuficiente para: ' . $item->producto->nombre
-            ], 400);
+        if (!$carrito || $carrito->items->isEmpty()) {
+            return response()->json(['error' => 'Carrito vacío'], 400);
         }
+
+        // Verificar stock
+        foreach ($carrito->items as $item) {
+            if ($item->producto->stock_actual < $item->cantidad) {
+                return response()->json([
+                    'error' => 'Stock insuficiente para: ' . $item->producto->nombre
+                ], 400);
+            }
+        }
+
+        // Configurar Mercado Pago
+        MercadoPagoConfig::setAccessToken(config('services.mercadopago.access_token'));
+
+        // Armar items
+        $items = [];
+        foreach ($carrito->items as $item) {
+            $items[] = [
+                'title'      => $item->producto->nombre,
+                'quantity'   => (int) $item->cantidad,
+                'unit_price' => (float) $item->producto->precio,
+                'currency_id' => 'COP',
+            ];
+        }
+
+        // Crear preference
+        $client = new PreferenceClient();
+
+        $preference = $client->create([
+            'items'      => $items,
+            'back_urls'  => [
+                'success' => route('checkout.exito'),
+                'failure' => route('carrito.index'),
+                'pending' => route('checkout.pendiente'),
+            ],
+            'auto_return'       => 'approved',
+            'notification_url'  => route('checkout.webhook'),
+            // Guardamos datos del envío en metadata
+            'metadata' => [
+                'user_id'     => Auth::id(),
+                'carrito_id'  => $carrito->id,
+                'direccion'   => $request->direccion,
+                'ciudad'      => $request->ciudad,
+                'metodo_pago' => $request->metodo_pago,
+            ],
+        ]);
+
+        return response()->json([
+            'init_point' => $preference->init_point,
+        ]);
     }
 
-    // Generar código Efecty si aplica
-    $codigoPago = $request->metodo_pago === 'efecty' ? 'EFY-' . strtoupper(substr(uniqid(), -8)) : null;
+    // Mercado Pago llama aquí cuando confirma el pago
+    public function webhook(Request $request)
+    {
+        Log::info('Webhook MP recibido', $request->all());
 
-    // Crear venta
-    $venta = Venta::create([
-        'tipo_venta'  => 'online',
-        'metodo_pago' => $request->metodo_pago ?? 'tarjeta',
-        'total'       => $carrito->total(),
-        'user_id'     => Auth::id(),
-        'codigo_pago' => $codigoPago,
-    ]);
+        if ($request->type !== 'payment') {
+            return response()->json(['status' => 'ignored'], 200);
+        }
 
-    // Crear envío
-    Envio::create([
-        'venta_id'  => $venta->id,
-        'direccion' => $request->direccion,
-        'ciudad'    => $request->ciudad,
-        'estado'    => 'pendiente',
-    ]);
+        MercadoPagoConfig::setAccessToken(config('services.mercadopago.access_token'));
 
-    // Descontar stock
-    foreach ($carrito->items as $item) {
-        $item->producto->decrement('stock_actual', $item->cantidad);
+        $paymentClient = new PaymentClient();
+        $payment = $paymentClient->get($request->data['id']);
+
+        if ($payment->status !== 'approved') {
+            return response()->json(['status' => 'not approved'], 200);
+        }
+
+        $meta = $payment->metadata;
+
+        $carrito = Carrito::with('items.producto')
+            ->find($meta->carrito_id);
+
+        if (!$carrito || $carrito->items->isEmpty()) {
+            return response()->json(['status' => 'carrito no encontrado'], 200);
+        }
+
+        // Evitar procesar dos veces el mismo pago
+        if (Venta::where('payment_id', $payment->id)->exists()) {
+            return response()->json(['status' => 'ya procesado'], 200);
+        }
+
+        // Crear venta
+        $venta = Venta::create([
+            'tipo_venta'  => 'online',
+            'metodo_pago' => $meta->metodo_pago ?? 'mercadopago',
+            'total'       => $payment->transaction_amount,
+            'user_id'     => $meta->user_id,
+            'payment_id'  => $payment->id,
+        ]);
+
+        $venta->update(['estado_pago' => 'approved']);
+        
+
+        // Crear envío
+        Envio::create([
+            'venta_id'  => $venta->id,
+            'direccion' => $meta->direccion,
+            'ciudad'    => $meta->ciudad,
+            'estado'    => 'pendiente',
+        ]);
+
+        // Descontar stock
+        foreach ($carrito->items as $item) {
+            $item->producto->decrement('stock_actual', $item->cantidad);
+        }
+
+        // Vaciar carrito
+        $carrito->items()->delete();
+
+        return response()->json(['status' => 'ok'], 200);
     }
 
-    // Vaciar carrito
-$carrito->items()->delete();
+    public function exito(Request $request)
+    {
+        // MP redirige aquí con payment_id en la URL
+        $paymentId = $request->payment_id;
+        $venta = Venta::where('payment_id', $paymentId)->first();
 
-return response()->json([
-    'redirect' => $request->metodo_pago === 'pse' 
-        ? route('checkout.pse', $venta->id)
-        : route('checkout.factura', $venta->id)
-]);
-}
-public function pse($ventaId)
-{
-    $venta = Venta::with(['usuario', 'envio'])->findOrFail($ventaId);
-    return view('checkout.pse', compact('venta'));
-}
+        if ($venta) {
+            return redirect()->route('checkout.factura', $venta->id);
+        }
 
-public function confirmarPse(Request $request, $ventaId)
-{
-    $request->validate([
-        'usuario_banco'    => 'required|string',
-        'password_banco'   => 'required|string',
-    ]);
+        // Si el webhook aún no procesó, mostrar pantalla de espera
+        return view('checkout.procesando');
+    }
 
-    // Simular procesamiento
-    return redirect()->route('checkout.factura', $ventaId);
-}
+    public function pendiente()
+    {
+        return view('checkout.pendiente');
+    }
 
     public function factura($ventaId)
     {
