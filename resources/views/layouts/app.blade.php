@@ -148,8 +148,8 @@
 
         <ul class="nav-links">
             <li><a href="{{ url('/') }}">Inicio</a></li>
-            <li><a href="#">Essentials</a></li>
-            <li><a href="#">The Chroma Life</a></li>
+            <li><a href="{{ route('essentials') }}">Essentials</a></li>
+            <li><a href="{{ route('chroma-life') }}">The Chroma Life</a></li>
         </ul>
 
         <div class="nav-actions">

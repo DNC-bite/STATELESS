@@ -14,6 +14,24 @@ use App\Models\Producto;
 
 Route::get('/producto/{producto}', [ProductoController::class, 'show'])->name('producto.show');
 
+// Ruta Essentials
+Route::get('/essentials', function () {
+    $essentials = Producto::where('estado', 'activo')
+        ->whereHas('categoria', fn($q) => $q->where('nombre', 'Essentials'))
+        ->get();
+
+    return view('ecommerce.essentials', compact('essentials'));
+})->name('essentials');
+
+// Ruta The Chroma Life
+Route::get('/chroma-life', function () {
+    $chromaLife = Producto::where('estado', 'activo')
+        ->whereHas('categoria', fn($q) => $q->where('nombre', 'The Chroma Life'))
+        ->get();
+
+    return view('ecommerce.chroma-life', compact('chromaLife'));
+})->name('chroma-life');
+
 // Ruta principal
 Route::get('/', function () {
     $essentials = Producto::where('estado', 'activo')

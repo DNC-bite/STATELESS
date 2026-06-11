@@ -9,16 +9,16 @@
         <h1 style="font-family:'Bebas Neue', sans-serif; font-size:120px; letter-spacing:10px; line-height:1; margin-bottom:20px;">STATELESS</h1>
         <p style="font-size:14px; letter-spacing:3px; text-transform:uppercase; opacity:0.7; margin-bottom:40px;">Define tu mundo. Sin etiquetas.</p>
         <div style="display:flex; gap:20px; justify-content:center;">
-            <a href="#" class="btn-stateless">Ver Essentials</a>
-            <a href="#" class="btn-stateless-outline" style="color:#fff; border-color:#fff;">The Chroma Life</a>
+            <a href="{{ route('essentials') }}" class="btn-stateless">Ver Essentials</a>
+            <a href="{{ route('chroma-life') }}" class="btn-stateless-outline" style="color:#000; border-color:#000;">The Chroma Life</a>
         </div>
     </div>
 </section>
 
-<!-- SECCIÓN ESSENTIALS -->
+<!-- SECCIÓN de Productos -->
 <section style="padding: 80px 60px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-        <h2 style="font-family:'Bebas Neue', sans-serif; font-size:48px; letter-spacing:4px;">ESSENTIAL</h2>
+        <h2 style="font-family:'Bebas Neue', sans-serif; font-size:48px; letter-spacing:4px;">Productos</h2>
         <a href="#" style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#000; text-decoration:none; border-bottom:1px solid #000;">Ver todo</a>
     </div>
     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:30px;">
@@ -45,43 +45,8 @@
 </div>
 </section>
 
-<!-- BANNER THE CHROMA LIFE -->
-<section style="background:#000; color:#fff; padding:100px 60px; text-align:center;">
-    <p style="font-size:12px; letter-spacing:6px; text-transform:uppercase; opacity:0.5; margin-bottom:16px;">Colección</p>
-    <h2 style="font-family:'Bebas Neue', sans-serif; font-size:72px; letter-spacing:6px; margin-bottom:20px;">¿CUÁL ES TU MUNDO?</h2>
-    <p style="font-size:14px; opacity:0.6; margin-bottom:40px; letter-spacing:1px;">Explora The Chroma Life — color, actitud y movimiento.</p>
-    <a href="#" class="btn-stateless-outline" style="color:#fff; border-color:#fff;">Explorar colección</a>
-</section>
 
-<!-- SECCIÓN THE CHROMA LIFE -->
-<section style="padding: 80px 60px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-        <h2 style="font-family:'Bebas Neue', sans-serif; font-size:48px; letter-spacing:4px;">THE CHROMA LIFE</h2>
-        <a href="#" style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#000; text-decoration:none; border-bottom:1px solid #000;">Ver todo</a>
-    </div>
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:30px;">
-    @forelse($chromaLife as $producto)
-    <div>
-        <a href="{{ route('producto.show', $producto) }}" style="text-decoration:none; color:#000;">
-            @if($producto->imagen)
-    <img src="{{ $producto->imagen }}" style="width:100%; aspect-ratio:3/4; object-fit:cover; margin-bottom:16px;">
-@else
-    <div style="background:#f2f2f2; aspect-ratio:3/4; margin-bottom:16px;"></div>
-@endif
-            <p style="font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase;">{{ $producto->nombre }}</p>
-            <p style="font-size:13px; opacity:0.5; margin-bottom:12px;">${{ number_format($producto->precio, 2) }}</p>
-        </a>
-        @if(Auth::check())
-    <button onclick="agregarAlCarrito(this.dataset.id, this)" data-id="{{ $producto->id }}" class="btn-stateless" style="width:100%; text-align:center;">Añadir al carrito</button>
-@else
-    <a href="{{ route('login') }}" class="btn-stateless" style="width:100%; text-align:center; display:block;">Añadir al carrito</a>
-@endif
-    </div>
-    @empty
-    <p style="opacity:0.4; font-size:13px;">No hay productos disponibles.</p>
-    @endforelse
-</div>
-</section>
+
 <script>
 function agregarAlCarrito(productoId, btn) {
     btn.disabled = true;
