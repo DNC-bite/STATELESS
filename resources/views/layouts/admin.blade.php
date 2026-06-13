@@ -268,8 +268,8 @@
     @endif
 </div>
         </div>
-        <nav class="sidebar-nav">
-    <a href="{{ url('/account') }}">Inicio</a>
+<nav class="sidebar-nav">
+    <a href="{{ route('admin.dashboard') }}">Inicio</a>
     @if(Auth::user()->role->name === 'admin')
         <a href="{{ route('ventas.index') }}">Ventas</a>
         <a href="{{ route('usuarios.index') }}">Usuarios</a>
@@ -278,10 +278,10 @@
         <a href="{{ route('proveedores.index') }}">Proveedores</a>
         <a href="{{ route('categorias.index') }}">Categorías</a>
     @elseif(Auth::user()->role->name === 'empleado')
-    <a href="{{ route('empleado.ventas.index') }}">Ventas</a>
-    <a href="{{ route('empleado.envios.index') }}">Envíos</a>
-    <a href="{{ route('empleado.proveedores.index') }}">Proveedores</a>
-@endif
+        <a href="{{ route('empleado.ventas.index') }}">Ventas</a>
+        <a href="{{ route('empleado.envios.index') }}">Envíos</a>
+        <a href="{{ route('empleado.proveedores.index') }}">Proveedores</a>
+    @endif
 </nav>
         <div class="sidebar-footer">
             {{ Auth::user()->name ?? 'Admin' }}

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CarritoItem;
 
 class Producto extends Model
 {
@@ -32,7 +33,11 @@ class Producto extends Model
         return $this->belongsTo(Proveedor::class);
     }
     public function imagenes()
-{
+    {
     return $this->hasMany(ProductoImagen::class)->orderBy('orden');
-}
+    }
+public function carritoItems()
+    {
+    return $this->hasMany(CarritoItem::class);
+    }
 }

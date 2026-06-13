@@ -19,7 +19,7 @@
 
         @if(Auth::user()->role && Auth::user()->role->name === 'admin')
         <!-- Panel Admin -->
-        <a href="{{ url('/admin/categorias') }}" style="text-decoration:none; color:#000;">
+        <a href="{{ route('admin.dashboard') }}" style="text-decoration:none; color:#000;">
             <div style="border:1px solid #000; background:#000; color:#fff; padding:28px; transition:opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
                 <p style="font-size:10px; letter-spacing:3px; text-transform:uppercase; opacity:0.4; margin-bottom:8px;">Administración</p>
                 <p style="font-family:'Bebas Neue', sans-serif; font-size:24px; letter-spacing:2px;">Panel Admin</p>
