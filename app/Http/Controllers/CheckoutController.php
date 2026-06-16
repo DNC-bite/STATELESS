@@ -34,9 +34,9 @@ class CheckoutController extends Controller
     public function procesar(Request $request)
     {
         $request->validate([
-            'direccion'    => 'required|string|max:255',
-            'ciudad'       => 'required|string|max:100',
-            'metodo_pago'  => 'required|string',
+            'direccion' => 'required|string|max:255',
+            'ciudad' => 'required|string|max:100',
+            'metodo_pago' => 'required|string',
         ]);
 
         $carrito = Carrito::with('items.producto')
@@ -44,57 +44,44 @@ class CheckoutController extends Controller
             ->first();
 
         if (!$carrito || $carrito->items->isEmpty()) {
-            return response()->json(['error' => 'Carrito vacío'], 400);
+            return response()->json([
+                'error' => 'Carrito vacío'
+            ], 400);
         }
 
-        // Verificar stock
-        foreach ($carrito->items as $item) {
-            if ($item->producto->stock_actual < $item->cantidad) {
-                return response()->json([
-                    'error' => 'Stock insuficiente para: ' . $item->producto->nombre
-                ], 400);
-            }
-        }
+        MercadoPagoConfig::setAccessToken(
+            config('services.mercadopago.access_token')
+        );
 
-        // Configurar Mercado Pago
-        MercadoPagoConfig::setAccessToken(config('services.mercadopago.access_token'));
-
-        // Armar items
         $items = [];
+
         foreach ($carrito->items as $item) {
             $items[] = [
-                'title'      => $item->producto->nombre,
-                'quantity'   => (int) $item->cantidad,
-                'unit_price' => (float) $item->producto->precio,
+                'title' => $item->producto->nombre,
+                'quantity' => (int)$item->cantidad,
+                'unit_price' => (float)$item->producto->precio,
                 'currency_id' => 'COP',
             ];
         }
 
-        // Crear preference
-        $client = new PreferenceClient();
+        try {
 
-        $preference = $client->create([
-            'items'      => $items,
-            'back_urls'  => [
-                'success' => route('checkout.exito'),
-                'failure' => route('carrito.index'),
-                'pending' => route('checkout.pendiente'),
-            ],
-            'auto_return'       => 'approved',
-            'notification_url'  => route('checkout.webhook'),
-            // Guardamos datos del envío en metadata
-            'metadata' => [
-                'user_id'     => Auth::id(),
-                'carrito_id'  => $carrito->id,
-                'direccion'   => $request->direccion,
-                'ciudad'      => $request->ciudad,
-                'metodo_pago' => $request->metodo_pago,
-            ],
-        ]);
+            $client = new PreferenceClient();
 
-        return response()->json([
-            'init_point' => $preference->init_point,
-        ]);
+            $preference = $client->create([
+                'items' => $items,
+            ]);
+
+            return response()->json([
+                'init_point' => $preference->init_point,
+            ]);
+        } catch (\Exception $e) {
+
+            dd(
+                'ERROR MERCADO PAGO',
+                $e->getMessage()
+            );
+        }
     }
 
     // Mercado Pago llama aquí cuando confirma el pago
@@ -139,7 +126,7 @@ class CheckoutController extends Controller
         ]);
 
         $venta->update(['estado_pago' => 'approved']);
-        
+
 
         // Crear envío
         Envio::create([
