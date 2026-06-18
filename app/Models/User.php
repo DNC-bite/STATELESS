@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;  // ← agrega este use
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -32,5 +34,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function ventas(): HasMany
+    {
+        return $this->hasMany(\App\Models\Venta::class);
     }
 }
