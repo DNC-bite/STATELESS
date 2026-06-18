@@ -30,6 +30,27 @@ Route::get('/', function () {
 
     return view('welcome', compact('essentials'));
 });
+
+// Rutas de colecciones
+Route::get('/essentials', function () {
+    $essentials = Producto::where('estado', 'activo')
+        ->whereHas('categoria', fn($q) => $q->where('nombre', 'Essentials'))
+        ->get();
+    return view('ecomerce.essentials', compact('essentials'));
+})->name('essentials');
+
+Route::get('/octane', function () {
+    $octane = Producto::where('estado', 'activo')
+        ->whereHas('categoria', fn($q) => $q->where('nombre', 'Octane'))
+        ->get();
+    return view('ecomerce.octane', compact('octane'));
+})->name('octane');
+Route::get('/waves', function () {
+    $waves = Producto::where('estado', 'activo')
+        ->whereHas('categoria', fn($q) => $q->where('nombre', 'Waves'))
+        ->get();
+    return view('ecomerce.waves', compact('waves'));
+})->name('waves');
 // Carrito
 Route::middleware('auth')->group(function () {
     Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
