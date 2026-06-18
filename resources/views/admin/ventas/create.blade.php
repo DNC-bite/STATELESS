@@ -31,13 +31,15 @@
             </select>
         </div>
         <div class="sl-form-group">
-            <label class="sl-label">Método de Pago</label>
             <select name="metodo_pago" class="sl-input" required>
-                <option value="">Seleccionar...</option>
-                <option value="efectivo" {{ old('metodo_pago') == 'efectivo' ? 'selected' : '' }}>Efectivo</option>
-                <option value="tarjeta" {{ old('metodo_pago') == 'tarjeta' ? 'selected' : '' }}>Tarjeta</option>
-                <option value="transferencia" {{ old('metodo_pago') == 'transferencia' ? 'selected' : '' }}>Transferencia</option>
-            </select>
+            <option value="">Seleccionar...</option>
+            <option value="efectivo" {{ old('metodo_pago') == 'efectivo' ? 'selected' : '' }}>Efectivo</option>
+            <option value="tarjeta" {{ old('metodo_pago') == 'tarjeta' ? 'selected' : '' }}>Tarjeta</option>
+            <option value="transferencia" {{ old('metodo_pago') == 'transferencia' ? 'selected' : '' }}>Transferencia</option>
+            <option value="nequi" {{ old('metodo_pago') == 'nequi' ? 'selected' : '' }}>Nequi</option>
+            <option value="pse" {{ old('metodo_pago') == 'pse' ? 'selected' : '' }}>PSE</option>
+            <option value="efecty" {{ old('metodo_pago') == 'efecty' ? 'selected' : '' }}>Efecty</option>
+        </select>
         </div>
         <div class="sl-form-group">
             <label class="sl-label">Total</label>
