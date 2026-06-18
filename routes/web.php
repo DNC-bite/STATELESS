@@ -12,6 +12,13 @@ use App\Http\Controllers\EnvioController;
 use App\Http\Controllers\CarritoController;
 use App\Models\Producto;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\AdminController;
+
+// Dentro del grupo admin
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    // ... resto de rutas
+});
 
 Route::get('/producto/{producto}', [ProductoController::class, 'show'])->name('producto.show');
 
