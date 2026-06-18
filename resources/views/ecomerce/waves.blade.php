@@ -4,13 +4,75 @@
 @section('content')
 
 
-<section style="background:#000; color:#fff; min-height:85vh; display:flex; align-items:center; justify-content:center; padding:80px 40px;">
-    <div style="width:100%; max-width:1100px; text-align:center;">
-        <p style="font-size:12px; letter-spacing:6px; text-transform:uppercase; opacity:0.5; margin-bottom:18px;">Nueva Colección 2025</p>
-        <h1 style="font-family:'Bebas Neue', sans-serif; font-size:96px; letter-spacing:8px; line-height:0.95; margin-bottom:20px;">WAVES</h1>
-        <p style="font-size:14px; letter-spacing:3px; text-transform:uppercase; opacity:0.7; margin-bottom:32px;">Tecnología de alto rendimiento en cada prenda.</p>
-        <a href="#catalogo" class="btn-stateless">Ver ropa</a>
+<section style="
+    background:url('{{ asset('images/Fondo_3_WAVES.png') }}');
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    min-height:85vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:80px 40px;
+">
+
+    <div style="
+        width:100%;
+        max-width:1100px;
+        text-align:center;
+        display:flex;
+        flex-direction:column;
+        justify-content:flex-end;
+        align-items:center;
+        gap:20px;
+        margin-top:350px;
+    ">
+      <h1 style="
+    position:absolute;
+    width:1px;
+    height:1px;
+    padding:0;
+    margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+    border:0;
+">
+    WAVES - Colección de ropa inspirada en el sonido y las frecuencias
+</h1>
+        <p style="
+            font-size:12px;
+            letter-spacing:5px;
+            text-transform:uppercase;
+            color:#111;
+            margin:0;
+            font-weight:500;
+        ">
+            Más allá del ruido
+        </p>
+
+        <a href="#catalogo"
+           style="
+            display:inline-block;
+            padding:14px 38px;
+            border:1px solid #111;
+            color:#111;
+            text-decoration:none;
+            text-transform:uppercase;
+            letter-spacing:3px;
+            font-size:12px;
+            font-weight:600;
+            transition:.3s;
+            background:rgba(255,255,255,.7);
+            backdrop-filter:blur(10px);
+           "
+           onmouseover="this.style.background='#111';this.style.color='#fff';"
+           onmouseout="this.style.background='rgba(255,255,255,.7)';this.style.color='#111';">
+            Ver colección
+        </a>
+
     </div>
+
 </section>
 
 
