@@ -277,10 +277,12 @@
         <a href="{{ route('productos.index') }}">Productos</a>
         <a href="{{ route('proveedores.index') }}">Proveedores</a>
         <a href="{{ route('categorias.index') }}">Categorías</a>
+        <a href="{{ route('reportes.index') }}">Reportes</a>
     @elseif(Auth::user()->role->name === 'empleado')
         <a href="{{ route('empleado.ventas.index') }}">Ventas</a>
         <a href="{{ route('empleado.envios.index') }}">Envíos</a>
         <a href="{{ route('empleado.proveedores.index') }}">Proveedores</a>
+        
     @endif
 </nav>
         <div class="sidebar-footer">

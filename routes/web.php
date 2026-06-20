@@ -13,6 +13,14 @@ use App\Http\Controllers\CarritoController;
 use App\Models\Producto;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReporteController;
+
+// Dentro del grupo admin
+Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
+Route::get('/reportes/ventas', [ReporteController::class, 'ventas'])->name('reportes.ventas');
+Route::get('/reportes/inventario', [ReporteController::class, 'inventario'])->name('reportes.inventario');
+Route::get('/reportes/envios', [ReporteController::class, 'envios'])->name('reportes.envios');
+Route::get('/reportes/proveedores', [ReporteController::class, 'proveedores'])->name('reportes.proveedores');
 
 // Dentro del grupo admin
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
