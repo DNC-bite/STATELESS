@@ -82,6 +82,7 @@ Marca ficticia de ropa urbana colombiana desarrollada como proyecto de clase en 
 ```bash
 # Levantar servidor
 C:\xampp82\php\php.exe artisan serve
+C:\xampp\php\php.exe artisan serve
 
 # Instalar dependencias
 C:\xampp82\php\php.exe C:\xampp82\php\composer require [paquete]

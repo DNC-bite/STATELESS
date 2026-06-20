@@ -9,30 +9,30 @@
         <!-- Slide 1 -->
         <div style="min-width:100%; height:90vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:60px; background:#000; color:#fff;">
             <div>
-                <p style="font-size:12px; letter-spacing:6px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;">Nueva Colección 2025</p>
+                <p style="font-size:12px; letter-spacing:6px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;">Nueva Colección 2026</p>
                 <h1 style="font-family:'Bebas Neue', sans-serif; font-size:120px; letter-spacing:10px; line-height:1; margin-bottom:20px;">STATELESS</h1>
                 <p style="font-size:14px; letter-spacing:3px; text-transform:uppercase; opacity:0.7; margin-bottom:40px;">Define tu mundo. Sin etiquetas.</p>
-                <a href="#essentials" class="btn-stateless-outline" style="color:#fff; border-color:#fff;">Ver Essentials</a>
+                <a href="#essentials" class="btn-stateless" style="color:#000; background:#fff; border-color:#fff;">Ver Essentials</a>
             </div>
         </div>
 
         <!-- Slide 2 -->
         <div style="min-width:100%; height:90vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:60px; background:#111; color:#fff;">
             <div>
-                <p style="font-size:12px; letter-spacing:6px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;">Colección</p>
-                <h1 style="font-family:'Bebas Neue', sans-serif; font-size:100px; letter-spacing:8px; line-height:1; margin-bottom:20px;">THE CHROMA LIFE</h1>
-                <p style="font-size:14px; letter-spacing:3px; text-transform:uppercase; opacity:0.7; margin-bottom:40px;">Color, actitud y movimiento.</p>
-                <a href="#chromalife" class="btn-stateless-outline" style="color:#fff; border-color:#fff;">Explorar colección</a>
+               <p style="font-size:12px; letter-spacing:6px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;">Colección</p>
+               <h1 style="font-family:'Bebas Neue', sans-serif; font-size:100px; letter-spacing:8px; line-height:1; margin-bottom:20px;">WAVES</h1>
+               <p style="font-size:14px; letter-spacing:3px; text-transform:uppercase; opacity:0.7; margin-bottom:40px;">Fluye. Sin resistencia.</p>
+               <a href="#waves" class="btn-stateless" style="color:#000; background:#fff; border-color:#fff;">Explorar colección</a>
             </div>
         </div>
 
         <!-- Slide 3 -->
         <div style="min-width:100%; height:90vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:60px; background:#000; color:#fff;">
             <div>
-                <p style="font-size:12px; letter-spacing:6px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;">STATELESS</p>
-                <h1 style="font-family:'Bebas Neue', sans-serif; font-size:100px; letter-spacing:8px; line-height:1; margin-bottom:20px;">SIN LÍMITES</h1>
-                <p style="font-size:14px; letter-spacing:3px; text-transform:uppercase; opacity:0.7; margin-bottom:40px;">Ropa urbana para los que no siguen reglas.</p>
-                <a href="{{ route('register') }}" class="btn-stateless-outline" style="color:#fff; border-color:#fff;">Únete ahora</a>
+                <p style="font-size:12px; letter-spacing:6px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;">Colección</p>
+                <h1 style="font-family:'Bebas Neue', sans-serif; font-size:100px; letter-spacing:8px; line-height:1; margin-bottom:20px;">OCTANE</h1>
+                <p style="font-size:14px; letter-spacing:3px; text-transform:uppercase; opacity:0.7; margin-bottom:40px;">Velocidad, calle y actitud.</p>
+                <a href="#octane" class="btn-stateless" style="color:#000; background:#fff; border-color:#fff;">Explorar colección</a>
             </div>
         </div>
 

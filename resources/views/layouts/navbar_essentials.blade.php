@@ -22,7 +22,7 @@
 
         /* NAVBAR */
         .navbar-stateless {
-            background-color: #000;
+            background-color: #fff;
             padding: 18px 40px;
             display: flex;
             justify-content: space-between;
@@ -35,7 +35,7 @@
         .navbar-stateless .brand {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 28px;
-            color: #fff;
+            color: #000;
             text-decoration: none;
             letter-spacing: 4px;
         }
@@ -48,7 +48,7 @@
         }
 
         .navbar-stateless .nav-links a {
-            color: #fff;
+            color: #000;
             text-decoration: none;
             font-size: 13px;
             font-weight: 500;
@@ -66,7 +66,7 @@
         }
 
         .navbar-stateless .nav-actions a {
-            color: #fff;
+            color: #000;
             text-decoration: none;
             font-size: 12px;
             font-weight: 500;
@@ -78,8 +78,8 @@
         .navbar-stateless .nav-actions a:hover { opacity: 0.6; }
 
         .btn-stateless {
-            background-color: #000;
-            color: #fff;
+            background-color: #ffffff;
+            color: #000000;
             border: 2px solid #000;
             padding: 10px 28px;
             font-size: 12px;
@@ -119,11 +119,12 @@
 
         /* FOOTER */
         .footer-stateless {
-            background-color: #000;
-            color: #fff;
+            background-color: #fff;
+            color: #000;
             padding: 40px;
             text-align: center;
             margin-top: 80px;
+            border-top: 1px solid #000;
         }
 
         .footer-stateless .brand {

@@ -53,7 +53,7 @@ class CheckoutController extends Controller
         return response()->json(['error' => 'Carrito vacío'], 400);
     }
 
-    // Verificar stock antes de procesar
+    // Verificar stock
     foreach ($carrito->items as $item) {
         if ($item->producto->stock_actual < $item->cantidad) {
             return response()->json([
@@ -62,12 +62,16 @@ class CheckoutController extends Controller
         }
     }
 
+    // Generar código Efecty si aplica
+    $codigoPago = $request->metodo_pago === 'efecty' ? 'EFY-' . strtoupper(substr(uniqid(), -8)) : null;
+
     // Crear venta
     $venta = Venta::create([
         'tipo_venta'  => 'online',
-        'metodo_pago' => 'tarjeta',
+        'metodo_pago' => $request->metodo_pago ?? 'tarjeta',
         'total'       => $carrito->total(),
         'user_id'     => Auth::id(),
+        'codigo_pago' => $codigoPago,
     ]);
 
     // Crear envío
@@ -78,7 +82,7 @@ class CheckoutController extends Controller
         'estado'    => 'pendiente',
     ]);
 
-    // ✅ Descontar stock
+    // Descontar stock
     foreach ($carrito->items as $item) {
         $item->producto->decrement('stock_actual', $item->cantidad);
     }
@@ -87,7 +91,9 @@ class CheckoutController extends Controller
     $carrito->items()->delete();
 
     return response()->json([
-        'redirect' => route('checkout.factura', $venta->id)
+        'redirect' => $request->metodo_pago === 'pse'
+            ? route('checkout.pse', $venta->id)
+            : route('checkout.factura', $venta->id)
     ]);
 }
 

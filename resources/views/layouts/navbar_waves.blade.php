@@ -22,7 +22,7 @@
 
         /* NAVBAR */
         .navbar-stateless {
-            background-color: #000;
+            background-color: #000000;
             padding: 18px 40px;
             display: flex;
             justify-content: space-between;
@@ -138,20 +138,53 @@
             opacity: 0.5;
             letter-spacing: 1px;
         }
+
+.nav-links img {
+    height: 22px;
+    width: auto;
+    display: block;
+    border: none;
+    transition: opacity .2s ease;
+}
+
+.nav-links img:hover {
+    opacity: .7;
+}
     </style>
 </head>
 <body>
 
     <!-- NAVBAR -->
     <nav class="navbar-stateless">
-        <a href="{{ url('/') }}" class="brand">STATELESS</a>
+    <a href="{{ url('/') }}" class="brand">
+        <img src="{{ asset('images/waves_nav/stateless.png') }}" style="height: 50px; width: auto;" alt="Inicio">
+    </a>
 
-        <ul class="nav-links">
-            <li><a href="{{ url('/') }}">Inicio</a></li>
-            <li><a href="{{ route('essentials') }}">Essentials</a></li>
-            <li><a href="{{ route('waves') }}">Waves</a></li>
-            <li><a href="{{ route('octane') }}">Octane</a></li>
-        </ul>
+    <ul class="nav-links">
+            <li>
+                <a href="{{ url('/') }}">
+                    <img src="{{ asset('images/waves_nav/inicio.png') }}" style="height: 37px; width: auto;" alt="Inicio">
+                </a>
+            </li>
+
+        <li>
+                <a href="{{ route('essentials') }}">
+                    <img src="{{ asset('images/waves_nav/essentials.png') }}" style="height: 37px; width: auto;" alt="Essentials">
+                </a>
+        </li>
+
+        <li>
+                <a href="{{ route('waves') }}">
+                    <img src="{{ asset('images/waves_nav/waves.png') }}" style="height: 37px; width: auto;" alt="Waves">
+                </a>
+        </li>
+        
+        <li>
+                <a href="{{ route('octane') }}">
+                    <img src="{{ asset('images/waves_nav/octane.png') }}" style="height: 37px; width: auto;" alt="Octane">
+                </a>
+        </li>
+    </ul>
 
         <div class="nav-actions">
         @auth
@@ -190,7 +223,7 @@
 
     <!-- FOOTER -->
     <footer class="footer-stateless">
-        <div class="brand">STATELESS</div>
+        <img src="{{ asset('images/waves_nav/stateless.png') }}" style="height: 50px; width: auto;" alt="Inicio">
         <p>© {{ date('Y') }} STATELESS. Todos los derechos reservados.</p>
     </footer>
 
