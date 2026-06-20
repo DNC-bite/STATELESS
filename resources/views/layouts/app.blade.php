@@ -171,7 +171,9 @@
     @else style="display:none;" 
     @endif>{{ $cantidadCarrito }}</span>
     </a>
+    @if(auth()->user()->hasVerifiedEmail())
     <a href="{{ route('account') }}">Mi Cuenta</a>
+    @endif
     <form method="POST" action="{{ route('logout') }}" style="display:inline">
         @csrf
         <button type="submit" style="background:none; border:none; color:#fff; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; opacity:1;" onmouseover="this.style.opacity=0.6" onmouseout="this.style.opacity=1">Salir</button>

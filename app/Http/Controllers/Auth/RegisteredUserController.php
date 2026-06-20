@@ -40,12 +40,20 @@ class RegisteredUserController extends Controller
         'name'     => $request->name,
         'email'    => $request->email,
         'password' => Hash::make($request->password),
-        'role_id'  => 3, // cliente
+        'role_id'  => 3,
     ]);
 
-    event(new Registered($user)); // ← esto dispara el correo de verificación
+    // Genera el link firmado de verificación
+    $url = \URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(60),
+        ['id' => $user->id, 'hash' => sha1($user->email)]
+    );
 
-    // NO hacer Auth::login aquí — forzamos a verificar primero
+    // Envía TU correo personalizado
+    \Illuminate\Support\Facades\Mail::to($user->email)
+        ->send(new \App\Mail\VerificarEmailMail($url, $user->name));
+
     return redirect()->route('verification.notice')
         ->with('status', 'Te enviamos un correo de verificación.');
 }

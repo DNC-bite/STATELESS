@@ -28,6 +28,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     // ... resto de rutas
 });
 
+Route::get('/account', function () {
+    return view('account.index');
+})->middleware(['auth', 'verified'])->name('account'); // ← agrega 'verified'
+
 Route::get('/producto/{producto}', [ProductoController::class, 'show'])->name('producto.show');
 
 // Ruta principal
