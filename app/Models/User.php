@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -39,5 +40,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function ventas(): HasMany
     {
         return $this->hasMany(\App\Models\Venta::class);
+    }
+    public function hasVerifiedEmail(): bool
+    {
+        if ($this->role_id === 1) return true; // admin siempre verificado
+        if ($this->role_id === 2) return true; // empleado también
+        return (bool) $this->email_verified;
+    }
+
+    public function markEmailAsVerified(): bool
+    {
+        return $this->forceFill(['email_verified' => true])->save();
     }
 }

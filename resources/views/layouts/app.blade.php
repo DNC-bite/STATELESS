@@ -195,7 +195,80 @@
         <div class="brand">STATELESS</div>
         <p>© {{ date('Y') }} STATELESS. Todos los derechos reservados.</p>
     </footer>
+        @auth
+        <div id="session-warning" style="
+            display:none;
+            position:fixed;
+            bottom:24px;
+            right:24px;
+            background:#000;
+            color:#fff;
+            padding:20px 24px;
+            z-index:9999;
+            font-family:'Inter',sans-serif;
+            font-size:13px;
+            max-width:300px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        ">
+            <p style="margin-bottom:12px;">⚠️ Tu sesión cerrará en <span id="countdown">2:00</span> por inactividad.</p>
+            <button onclick="resetTimer()" style="
+                background:#fff;
+                color:#000;
+                border:none;
+                padding:8px 16px;
+                font-size:12px;
+                font-weight:600;
+                letter-spacing:1px;
+                cursor:pointer;
+                width:100%;
+            ">SEGUIR CONECTADO</button>
+        </div>
 
+        <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display:none;">
+            @csrf
+        </form>
+
+        <script>
+        const INACTIVITY_LIMIT = 30 * 60; // 30 minutos en segundos
+        const WARNING_TIME = 2 * 60;      // aviso 2 minutos antes
+        let timer = INACTIVITY_LIMIT;
+        let interval;
+
+        function startTimer() {
+            clearInterval(interval);
+            interval = setInterval(() => {
+                timer--;
+
+                // Mostrar aviso cuando quedan 2 minutos
+                if (timer <= WARNING_TIME) {
+                    document.getElementById('session-warning').style.display = 'block';
+                    const min = Math.floor(timer / 60);
+                    const sec = timer % 60;
+                    document.getElementById('countdown').textContent =
+                        `${min}:${sec.toString().padStart(2, '0')}`;
+                }
+
+                // Cerrar sesión cuando llega a 0
+                if (timer <= 0) {
+                    document.getElementById('logout-form').submit();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            timer = INACTIVITY_LIMIT;
+            document.getElementById('session-warning').style.display = 'none';
+            startTimer();
+        }
+
+        // Reinicia el timer con cualquier actividad
+        ['mousemove', 'keypress', 'click', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetTimer);
+        });
+
+        startTimer();
+        </script>
+        @endauth
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

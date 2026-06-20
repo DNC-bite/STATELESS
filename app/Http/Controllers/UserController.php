@@ -9,11 +9,22 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
-    {
-        $users = User::with('role')->get();
-        return view('admin.usuarios.index', compact('users'));
-    }
+    public function index(Request $request)
+{
+    $roles = Role::all();
+
+    $users = User::with('role')
+        ->when($request->search, fn($q) =>
+            $q->where('name', 'like', '%'.$request->search.'%')
+              ->orWhere('email', 'like', '%'.$request->search.'%')
+        )
+        ->when($request->rol, fn($q) =>
+            $q->where('role_id', $request->rol)
+        )
+        ->get();
+
+    return view('admin.usuarios.index', compact('users', 'roles'));
+}
 
     public function create()
     {

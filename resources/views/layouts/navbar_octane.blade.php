@@ -353,8 +353,10 @@ body{
             }
         @endphp
        <span id="carrito-contador" 
-    @if($cantidadCarrito > 0) style="background:#fff; color:#000; border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700;" 
-    @else style="display:none;" 
+    @if($cantidadCarrito > 0) 
+        style="border-radius:50%; width:18px; height:18px; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700;" 
+    @else 
+        style="display:none;" 
     @endif>{{ $cantidadCarrito }}</span>
     </a>
     <a href="{{ route('account') }}">Mi Cuenta</a>

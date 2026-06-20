@@ -13,6 +13,32 @@
     <a href="{{ route('usuarios.create') }}" class="btn-sl">+ Registrar</a>
 </div>
 
+{{-- FILTROS --}}
+<form method="GET" action="{{ route('usuarios.index') }}" style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
+    <input
+        type="text"
+        name="search"
+        value="{{ request('search') }}"
+        placeholder="Buscar por nombre o email..."
+        style="padding:10px 16px; border:1px solid #000; font-family:'Inter',sans-serif; font-size:13px; flex:1; min-width:200px;"
+    >
+    <select
+        name="rol"
+        style="padding:10px 16px; border:1px solid #000; font-family:'Inter',sans-serif; font-size:13px; min-width:160px;"
+    >
+        <option value="">Todos los roles</option>
+        @foreach($roles as $role)
+            <option value="{{ $role->id }}" {{ request('rol') == $role->id ? 'selected' : '' }}>
+                {{ ucfirst($role->name) }}
+            </option>
+        @endforeach
+    </select>
+    <button type="submit" class="btn-sl">Filtrar</button>
+    @if(request('search') || request('rol'))
+        <a href="{{ route('usuarios.index') }}" class="btn-sl-outline">Limpiar</a>
+    @endif
+</form>
+
 <table class="stateless-table">
     <thead>
         <tr>
@@ -41,7 +67,9 @@
         </tr>
         @empty
         <tr>
-            <td colspan="5" style="text-align:center; opacity:0.5; padding:40px;">No hay usuarios registrados.</td>
+            <td colspan="5" style="text-align:center; opacity:0.5; padding:40px;">
+                No hay usuarios {{ request('search') || request('rol') ? 'con esos filtros' : 'registrados' }}.
+            </td>
         </tr>
         @endforelse
     </tbody>

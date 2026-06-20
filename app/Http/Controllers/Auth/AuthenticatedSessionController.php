@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -25,13 +26,13 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
 {
     $request->authenticate();
-
-    // Si no verificó, redirigir a la pantalla de verificación (sigue autenticado)
-    if (!$request->user()->hasVerifiedEmail()) {
-        return redirect()->route('verification.notice');
-    }
-
     $request->session()->regenerate();
+
+    DB::table('sessions')
+        ->where('user_id', $request->user()->id)
+        ->where('id', '!=', session()->getId())
+        ->delete();
+
     return redirect()->intended(route('account'));
 }
 

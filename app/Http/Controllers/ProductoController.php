@@ -34,43 +34,63 @@ class ProductoController extends Controller
 }
 
     public function create()
-    {
-        $categorias = Categoria::all();
-        $proveedores = Proveedor::all();
-        return view('admin.productos.create', compact('categorias', 'proveedores'));
-    }
+{
+    $categorias = Categoria::all();
+    $proveedores = Proveedor::all();
+    
+    $imagenes = collect(glob(public_path('images/*')))
+        ->map(fn($path) => basename($path))
+        ->filter(fn($name) => in_array(
+            strtolower(pathinfo($name, PATHINFO_EXTENSION)),
+            ['jpg', 'jpeg', 'png', 'webp']
+        ))
+        ->values();
+
+    return view('admin.productos.create', compact('categorias', 'proveedores', 'imagenes'));
+}
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'nombre'       => 'required|string|max:255',
-            'descripcion'  => 'nullable|string',
-            'precio'       => 'required|numeric|min:0',
-            'estado'       => 'required|string',
-            'stock_actual' => 'required|integer|min:0',
-            'stock_minimo' => 'required|integer|min:0',
-            'stock_maximo' => 'required|integer|min:0',
-            'categoria_id' => 'required|exists:categorias,id',
-            'proveedor_id' => 'required|exists:proveedores,id',
-        ]);
+{
+    $request->validate([
+        'nombre'       => 'required|string|max:255',
+        'descripcion'  => 'nullable|string',
+        'precio'       => 'required|numeric|min:0',
+        'estado'       => 'required|string',
+        'stock_actual' => 'required|integer|min:0',
+        'stock_minimo' => 'required|integer|min:0',
+        'stock_maximo' => 'required|integer|min:0',
+        'categoria_id' => 'required|exists:categorias,id',
+        'proveedor_id' => 'required|exists:proveedores,id',
+        'imagen_nueva' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+    ]);
 
-        $producto = Producto::create($request->all());
+    $data = $request->except('imagen_nueva', 'imagenes', '_token', '_method');
 
-        // Guardar imágenes adicionales
-        if ($request->imagenes) {
-            foreach ($request->imagenes as $index => $imagen) {
-                if ($imagen) {
-                    ProductoImagen::create([
-                        'producto_id' => $producto->id,
-                        'imagen'      => $imagen,
-                        'orden'       => $index,
-                    ]);
-                }
+    // Si subieron un archivo nuevo, lo movemos a public/images/ y usamos su nombre
+    if ($request->hasFile('imagen_nueva')) {
+        $archivo = $request->file('imagen_nueva');
+        $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
+        $archivo->move(public_path('images'), $nombreArchivo);
+        $data['imagen'] = $nombreArchivo;
+    }
+
+    $producto = Producto::create($data);
+
+    // Guardar imágenes adicionales
+    if ($request->imagenes) {
+        foreach ($request->imagenes as $index => $imagen) {
+            if ($imagen) {
+                ProductoImagen::create([
+                    'producto_id' => $producto->id,
+                    'imagen'      => $imagen,
+                    'orden'       => $index,
+                ]);
             }
         }
-
-        return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
     }
+
+    return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
+}
 
     public function show($id)
     {
@@ -82,46 +102,65 @@ class ProductoController extends Controller
     }
 
     public function edit($id)
-    {
-        $producto = Producto::with('imagenes')->findOrFail($id);
-        $categorias = Categoria::all();
-        $proveedores = Proveedor::all();
-        return view('admin.productos.edit', compact('producto', 'categorias', 'proveedores'));
-    }
+{
+    $producto = Producto::with('imagenes')->findOrFail($id);
+    $categorias = Categoria::all();
+    $proveedores = Proveedor::all();
+
+    $imagenes = collect(glob(public_path('images/*')))
+        ->map(fn($path) => basename($path))
+        ->filter(fn($name) => in_array(
+            strtolower(pathinfo($name, PATHINFO_EXTENSION)),
+            ['jpg', 'jpeg', 'png', 'webp']
+        ))
+        ->values();
+
+    return view('admin.productos.edit', compact('producto', 'categorias', 'proveedores', 'imagenes'));
+}
 
     public function update(Request $request, $id)
-    {
-        $producto = Producto::findOrFail($id);
-        $request->validate([
-            'nombre'       => 'required|string|max:255',
-            'descripcion'  => 'nullable|string',
-            'precio'       => 'required|numeric|min:0',
-            'estado'       => 'required|string',
-            'stock_actual' => 'required|integer|min:0',
-            'stock_minimo' => 'required|integer|min:0',
-            'stock_maximo' => 'required|integer|min:0',
-            'categoria_id' => 'required|exists:categorias,id',
-            'proveedor_id' => 'required|exists:proveedores,id',
-        ]);
+{
+    $producto = Producto::findOrFail($id);
+    $request->validate([
+        'nombre'       => 'required|string|max:255',
+        'descripcion'  => 'nullable|string',
+        'precio'       => 'required|numeric|min:0',
+        'estado'       => 'required|string',
+        'stock_actual' => 'required|integer|min:0',
+        'stock_minimo' => 'required|integer|min:0',
+        'stock_maximo' => 'required|integer|min:0',
+        'categoria_id' => 'required|exists:categorias,id',
+        'proveedor_id' => 'required|exists:proveedores,id',
+        'imagen_nueva' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+    ]);
 
-        $producto->update($request->all());
+    $data = $request->except('imagen_nueva', 'imagenes', '_token', '_method');
 
-        // Actualizar imágenes adicionales
-        if ($request->imagenes) {
-            $producto->imagenes()->delete();
-            foreach ($request->imagenes as $index => $imagen) {
-                if ($imagen) {
-                    ProductoImagen::create([
-                        'producto_id' => $producto->id,
-                        'imagen'      => $imagen,
-                        'orden'       => $index,
-                    ]);
-                }
+    if ($request->hasFile('imagen_nueva')) {
+        $archivo = $request->file('imagen_nueva');
+        $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
+        $archivo->move(public_path('images'), $nombreArchivo);
+        $data['imagen'] = $nombreArchivo;
+    }
+
+    $producto->update($data);
+
+    // Actualizar imágenes adicionales
+    if ($request->imagenes) {
+        $producto->imagenes()->delete();
+        foreach ($request->imagenes as $index => $imagen) {
+            if ($imagen) {
+                ProductoImagen::create([
+                    'producto_id' => $producto->id,
+                    'imagen'      => $imagen,
+                    'orden'       => $index,
+                ]);
             }
         }
-
-        return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
     }
+
+    return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
+}
 
     public function destroy($id)
     {
