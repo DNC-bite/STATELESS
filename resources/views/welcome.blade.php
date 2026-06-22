@@ -192,7 +192,7 @@
 /* ESSENTIALS */
 .essentials-section {
     padding: 100px 40px;
-    background: #080808;
+    background: #ffffff;
 }
 
 .section-header {
@@ -208,7 +208,7 @@
     font-size: 11px;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.25);
+    color: rgb(0, 0, 0);
     margin-bottom: 8px;
 }
 
@@ -217,19 +217,19 @@
     font-size: 52px;
     letter-spacing: 4px;
     line-height: 1;
-    color: #fff;
+    color: #000000;
 }
 
 .section-header-right a {
     font-size: 11px;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
+    color: rgb(0, 0, 0);
     text-decoration: none;
     transition: color 0.3s;
 }
 
-.section-header-right a:hover { color: #fff; }
+.section-header-right a:hover { color: #000000; }
 
 .essentials-track-wrap {
     position: relative;
@@ -280,7 +280,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 12px;
     letter-spacing: 3px;
-    color: rgba(255,255,255,0.3);
+    color: rgb(97, 87, 153);
     z-index: 2;
 }
 

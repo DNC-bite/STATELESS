@@ -114,6 +114,12 @@ Route::middleware(['auth', 'role:empleado'])->prefix('empleado')->name('empleado
     Route::resource('proveedores', ProveedorController::class);
 });
 
+// Variantes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::post('/productos/{producto}/variantes', [\App\Http\Controllers\VarianteController::class, 'store'])->name('variantes.store');
+    Route::delete('/variantes/{variante}', [\App\Http\Controllers\VarianteController::class, 'destroy'])->name('variantes.destroy');
+});
+
 // Autenticación
 require __DIR__.'/auth.php';
 
