@@ -35,7 +35,9 @@
         </div>
         <div class="sl-form-group">
             <label class="sl-label">Fecha de Envío</label>
-            <input type="date" name="fecha_envio" class="sl-input" value="{{ old('fecha_envio') }}">
+            <input type="date" name="fecha_envio" class="sl-input"
+       min="{{ now()->format('Y-m-d') }}"
+       value="{{ old('fecha_envio', $envio->fecha_envio ?? '') }}">
         </div>
         <div class="sl-form-group">
             <label class="sl-label">Dirección</label>

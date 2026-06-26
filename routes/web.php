@@ -14,6 +14,8 @@ use App\Models\Producto;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\PedidoController;
+
 
 // Dentro del grupo admin
 Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
@@ -27,7 +29,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     // ... resto de rutas
 });
-
+Route::middleware('auth')->group(function () {
+    Route::get('/account/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
+});
 Route::get('/account', function () {
     return view('account.index');
 })->middleware(['auth', 'verified'])->name('account'); // ← agrega 'verified'
@@ -72,15 +76,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/carrito/vaciar', [CarritoController::class, 'vaciar'])->name('carrito.vaciar');
 }); 
 
-// Checkout
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/procesar', [CheckoutController::class, 'procesar'])->name('checkout.procesar');
     Route::get('/checkout/factura/{venta}', [CheckoutController::class, 'factura'])->name('checkout.factura');
     Route::get('/checkout/factura/{venta}/descargar', [CheckoutController::class, 'descargarFactura'])->name('checkout.descargar');
-});
-// Ruta PSE
-Route::middleware('auth')->group(function () {
     Route::get('/checkout/pse/{venta}', [CheckoutController::class, 'pse'])->name('checkout.pse');
     Route::post('/checkout/pse/{venta}/confirmar', [CheckoutController::class, 'confirmarPse'])->name('checkout.pse.confirmar');
 });
@@ -123,6 +123,3 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 // Autenticación
 require __DIR__.'/auth.php';
 
-Route::get('/account', function () {
-    return view('account.index');
-})->middleware('auth')->name('account');

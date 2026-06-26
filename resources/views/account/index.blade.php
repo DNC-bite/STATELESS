@@ -41,7 +41,7 @@
 
         @if(Auth::user()->role && Auth::user()->role->name === 'cliente')
         <!-- Mis Pedidos -->
-        <a href="#" style="text-decoration:none; color:#000;">
+        <a href="{{ route('pedidos.index') }}" style="text-decoration:none; color:inherit;">
             <div style="border:1px solid #eee; padding:28px;" onmouseover="this.style.borderColor='#000'" onmouseout="this.style.borderColor='#eee'">
                 <p style="font-size:10px; letter-spacing:3px; text-transform:uppercase; opacity:0.4; margin-bottom:8px;">Compras</p>
                 <p style="font-family:'Bebas Neue', sans-serif; font-size:24px; letter-spacing:2px;">Mis Pedidos</p>

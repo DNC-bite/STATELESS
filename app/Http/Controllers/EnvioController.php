@@ -26,12 +26,12 @@ class EnvioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'venta_id'    => 'required|exists:ventas,id',
-            'fecha_envio' => 'nullable|date',
-            'direccion'   => 'required|string|max:255',
-            'ciudad'      => 'required|string|max:100',
-            'estado'      => 'required|string',
-        ]);
+    'venta_id'    => 'required|exists:ventas,id',
+    'fecha_envio' => 'nullable|date|after_or_equal:today',
+    'direccion'   => 'required|string|max:255',
+    'ciudad'      => 'required|string|max:100',
+    'estado'      => 'required|string',
+]);
 
         Envio::create($request->all());
         return redirect()->route('envios.index')->with('success', 'Envío registrado correctamente.');
@@ -48,12 +48,12 @@ class EnvioController extends Controller
     {
         $envio = Envio::findOrFail($id);
         $request->validate([
-            'venta_id'    => 'required|exists:ventas,id',
-            'fecha_envio' => 'nullable|date',
-            'direccion'   => 'required|string|max:255',
-            'ciudad'      => 'required|string|max:100',
-            'estado'      => 'required|string',
-        ]);
+    'venta_id'    => 'required|exists:ventas,id',
+    'fecha_envio' => 'nullable|date|after_or_equal:today',
+    'direccion'   => 'required|string|max:255',
+    'ciudad'      => 'required|string|max:100',
+    'estado'      => 'required|string',
+]);
 
         $envio->update($request->all());
         return redirect()->route('envios.index')->with('success', 'Envío actualizado correctamente.');

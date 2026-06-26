@@ -36,6 +36,28 @@ class CheckoutController extends Controller
             'stripeKey'    => config('services.stripe.key'),
         ]);
     }
+    public function pse($ventaId)
+{
+    $venta = Venta::with('envio')->findOrFail($ventaId);
+    return view('checkout.pse', compact('venta'));
+}
+public function confirmarPse(Request $request, $ventaId)
+{
+    $request->validate([
+        'banco_simulado' => 'required|in:banco_aprueba,banco_rechaza',
+    ]);
+
+    $venta = Venta::findOrFail($ventaId);
+
+    if ($request->banco_simulado === 'banco_aprueba') {
+        $venta->update(['estado' => 'pagada']);
+        return redirect()->route('checkout.factura', $venta->id)
+            ->with('success', 'Pago PSE simulado aprobado.');
+    }
+
+    return redirect()->route('checkout.index')
+        ->with('error', 'El banco simulado rechazó el pago.');
+}
 
     public function procesar(Request $request)
 {

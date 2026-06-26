@@ -23,6 +23,19 @@
     <form action="{{ route('ventas.update', $venta) }}" method="POST">
         @csrf
         @method('PUT')
+
+        <div class="sl-form-group">
+    <label class="sl-label">Cliente</label>
+    <select class="sl-input" disabled style="background:#f5f5f5; cursor:not-allowed;">
+        @foreach($usuarios as $usuario)
+            <option value="{{ $usuario->id }}" {{ $venta->user_id == $usuario->id ? 'selected' : '' }}>
+                {{ $usuario->name }} ({{ $usuario->email }})
+            </option>
+        @endforeach
+    </select>
+    <input type="hidden" name="user_id" value="{{ $venta->user_id }}">
+</div>
+
         <div class="sl-form-group">
             <label class="sl-label">Tipo de Venta</label>
             <select name="tipo_venta" class="sl-input" required>
@@ -30,6 +43,24 @@
                 <option value="online" {{ $venta->tipo_venta == 'online' ? 'selected' : '' }}>Online</option>
             </select>
         </div>
+
         <div class="sl-form-group">
             <label class="sl-label">Método de Pago</label>
-            <select name="metodo_pa
+            <select name="metodo_pago" class="sl-input" required>
+                <option value="tarjeta" {{ $venta->metodo_pago == 'tarjeta' ? 'selected' : '' }}>Tarjeta</option>
+                <option value="pse" {{ $venta->metodo_pago == 'pse' ? 'selected' : '' }}>PSE</option>
+                <option value="nequi" {{ $venta->metodo_pago == 'nequi' ? 'selected' : '' }}>Nequi</option>
+                <option value="efecty" {{ $venta->metodo_pago == 'efecty' ? 'selected' : '' }}>Efecty</option>
+            </select>
+        </div>
+
+        <div class="sl-form-group">
+            <label class="sl-label">Total</label>
+            <input type="number" step="0.01" name="total" class="sl-input" value="{{ $venta->total }}" required>
+        </div>
+
+        <button type="submit" class="btn-sl">Guardar Cambios</button>
+    </form>
+</div>
+
+@endsection

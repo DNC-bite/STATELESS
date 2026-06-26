@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\VentaItem;
 
 class Venta extends Model
 {
@@ -15,6 +16,10 @@ class Venta extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function items()
+{
+    return $this->hasMany(VentaItem::class);
+}
 
     public function envio()
     {

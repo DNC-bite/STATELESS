@@ -269,8 +269,8 @@
 </div>
         </div>
 <nav class="sidebar-nav">
-    <a href="{{ route('admin.dashboard') }}">Inicio</a>
     @if(Auth::user()->role->name === 'admin')
+        <a href="{{ route('admin.dashboard') }}">Inicio</a>
         <a href="{{ route('ventas.index') }}">Ventas</a>
         <a href="{{ route('usuarios.index') }}">Usuarios</a>
         <a href="{{ route('envios.index') }}">Envíos</a>
@@ -282,8 +282,9 @@
         <a href="{{ route('empleado.ventas.index') }}">Ventas</a>
         <a href="{{ route('empleado.envios.index') }}">Envíos</a>
         <a href="{{ route('empleado.proveedores.index') }}">Proveedores</a>
-        
+        <a href="{{ route('reportes.index') }}">Reportes</a>
     @endif
+</nav>
 </nav>
         <div class="sidebar-footer">
             {{ Auth::user()->name ?? 'Admin' }}

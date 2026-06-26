@@ -44,18 +44,17 @@ class VentaController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $venta = Venta::findOrFail($id);
-        $request->validate([
-            'tipo_venta'   => 'required|string',
-            'metodo_pago'  => 'required|string',
-            'total'        => 'required|numeric|min:0',
-            'user_id'      => 'required|exists:users,id',
-        ]);
+{
+    $venta = Venta::findOrFail($id);
+    $request->validate([
+        'tipo_venta'   => 'required|string',
+        'metodo_pago'  => 'required|string',
+        'total'        => 'required|numeric|min:0',
+    ]);
 
-        $venta->update($request->all());
-        return redirect()->route('ventas.index')->with('success', 'Venta actualizada correctamente.');
-    }
+    $venta->update($request->only(['tipo_venta', 'metodo_pago', 'total']));
+    return redirect()->route('ventas.index')->with('success', 'Venta actualizada correctamente.');
+}
 
     public function destroy($id)
     {

@@ -23,7 +23,10 @@
     <form action="{{ route('productos.update', $producto) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
-
+    <div class="sl-form-group">
+    <label class="sl-label">Nombre</label>
+    <input type="text" name="nombre" class="sl-input" value="{{ old('nombre', $producto->nombre) }}" required>
+</div>
     <div class="sl-form-group">
         <label class="sl-label">Nombre de imagen</label>
         <div id="img-preview" style="margin-bottom:12px;">
