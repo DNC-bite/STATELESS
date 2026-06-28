@@ -13,32 +13,6 @@
     <a href="{{ route('usuarios.create') }}" class="btn-sl">+ Registrar</a>
 </div>
 
-{{-- FILTROS --}}
-<form method="GET" action="{{ route('usuarios.index') }}" style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
-    <input
-        type="text"
-        name="search"
-        value="{{ request('search') }}"
-        placeholder="Buscar por nombre o email..."
-        style="padding:10px 16px; border:1px solid #000; font-family:'Inter',sans-serif; font-size:13px; flex:1; min-width:200px;"
-    >
-    <select
-        name="rol"
-        style="padding:10px 16px; border:1px solid #000; font-family:'Inter',sans-serif; font-size:13px; min-width:160px;"
-    >
-        <option value="">Todos los roles</option>
-        @foreach($roles as $role)
-            <option value="{{ $role->id }}" {{ request('rol') == $role->id ? 'selected' : '' }}>
-                {{ ucfirst($role->name) }}
-            </option>
-        @endforeach
-    </select>
-    <button type="submit" class="btn-sl">Filtrar</button>
-    @if(request('search') || request('rol'))
-        <a href="{{ route('usuarios.index') }}" class="btn-sl-outline">Limpiar</a>
-    @endif
-</form>
-
 <table class="stateless-table">
     <thead>
         <tr>
@@ -46,6 +20,7 @@
             <th>Nombre</th>
             <th>Email</th>
             <th>Rol</th>
+            <th>Estado</th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -55,21 +30,57 @@
             <td>{{ $user->id }}</td>
             <td>{{ $user->name }}</td>
             <td>{{ $user->email }}</td>
-            <td>{{ $user->role->name ?? '—' }}</td>
+            <td>
+    <form action="{{ route('usuarios.update', $user) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="name" value="{{ $user->name }}">
+        <input type="hidden" name="email" value="{{ $user->email }}">
+        <input type="hidden" name="estado" value="{{ $user->estado }}">
+        <select name="role_id" onchange="this.form.submit()"
+            style="padding:6px 10px; border:1px solid #ddd; font-size:12px;">
+            @foreach($roles as $rol)
+                <option value="{{ $rol->id }}" {{ $user->role_id == $rol->id ? 'selected' : '' }}>
+                    {{ ucfirst($rol->name) }}
+                </option>
+            @endforeach
+        </select>
+    </form>
+</td>
+            <td>
+                @if($user->estado === 'activo')
+                    <span style="background:green; color:#fff; padding:2px 8px; font-size:10px;">ACTIVO</span>
+                @else
+                    <span style="background:#c00; color:#fff; padding:2px 8px; font-size:10px;">INACTIVO</span>
+                @endif
+            </td>
             <td style="display:flex; gap:8px;">
-                <a href="{{ route('usuarios.edit', $user) }}" class="btn-sl-outline">Editar</a>
-                <form action="{{ route('usuarios.destroy', $user) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-sl-danger" onclick="return confirm('¿Eliminar este usuario?')">Eliminar</button>
-                </form>
+                @if($user->estado === 'activo')
+                    <form action="{{ route('usuarios.update', $user) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="name" value="{{ $user->name }}">
+                        <input type="hidden" name="email" value="{{ $user->email }}">
+                        <input type="hidden" name="role_id" value="{{ $user->role_id }}">
+                        <input type="hidden" name="estado" value="inactivo">
+                        <button type="submit" class="btn-sl-danger" onclick="return confirm('¿Inhabilitar este usuario?')">Inhabilitar</button>
+                    </form>
+                @else
+                    <form action="{{ route('usuarios.update', $user) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="name" value="{{ $user->name }}">
+                        <input type="hidden" name="email" value="{{ $user->email }}">
+                        <input type="hidden" name="role_id" value="{{ $user->role_id }}">
+                        <input type="hidden" name="estado" value="activo">
+                        <button type="submit" class="btn-sl" onclick="return confirm('¿Habilitar este usuario?')">Habilitar</button>
+                    </form>
+                @endif
             </td>
         </tr>
         @empty
         <tr>
-            <td colspan="5" style="text-align:center; opacity:0.5; padding:40px;">
-                No hay usuarios {{ request('search') || request('rol') ? 'con esos filtros' : 'registrados' }}.
-            </td>
+            <td colspan="6" style="text-align:center; opacity:0.5; padding:40px;">No hay usuarios registrados.</td>
         </tr>
         @endforelse
     </tbody>

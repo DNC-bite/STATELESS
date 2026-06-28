@@ -1,36 +1,41 @@
 <x-guest-layout>
-    <h2 class="mb-4 text-center">Registro</h2>
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    <h2>CREAR CUENTA</h2>
+    <p class="subtitle">Únete a Stateless</p>
 
     <form method="POST" action="{{ route('register') }}">
         @csrf
-        <div class="mb-3">
-            <label for="name" class="form-label">Nombre</label>
-            <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Correo electrónico</label>
-            <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Contraseña</label>
-            <input id="password" type="password" class="form-control" name="password" required>
-        </div>
-        <div class="mb-3">
-            <label for="password_confirmation" class="form-label">Confirmar contraseña</label>
-            <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required>
-        </div>
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-success">Registrarme</button>
-        </div>
+
+        <label for="name">Nombre</label>
+        <input id="name" class="form-control @error('name') is-invalid @enderror"
+               type="text" name="name" value="{{ old('name') }}"
+               placeholder="Tu nombre completo" required autofocus>
+        @error('name')
+            <div class="text-danger mb-2">{{ $message }}</div>
+        @enderror
+
+        <label for="email">Correo electrónico</label>
+        <input id="email" class="form-control @error('email') is-invalid @enderror"
+               type="email" name="email" value="{{ old('email') }}"
+               placeholder="tucorreo@ejemplo.com" required>
+        @error('email')
+            <div class="text-danger mb-2">{{ $message }}</div>
+        @enderror
+
+        <label for="password">Contraseña</label>
+        <input id="password" class="form-control @error('password') is-invalid @enderror"
+               type="password" name="password" placeholder="••••••••" required>
+        @error('password')
+            <div class="text-danger mb-2">{{ $message }}</div>
+        @enderror
+
+        <label for="password_confirmation">Confirmar contraseña</label>
+        <input id="password_confirmation" class="form-control"
+               type="password" name="password_confirmation" placeholder="••••••••" required>
+
+        <button type="submit" class="btn-stateless">REGISTRARME</button>
+
+        <p class="text-center mt-4" style="font-size:11px; color:rgba(255,255,255,0.5);">
+            ¿Ya tienes cuenta? <a href="{{ route('login') }}">Inicia sesión</a>
+        </p>
     </form>
 </x-guest-layout>

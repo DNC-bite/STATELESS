@@ -45,19 +45,29 @@ class EnvioController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $envio = Envio::findOrFail($id);
-        $request->validate([
-    'venta_id'    => 'required|exists:ventas,id',
-    'fecha_envio' => 'nullable|date|after_or_equal:today',
-    'direccion'   => 'required|string|max:255',
-    'ciudad'      => 'required|string|max:100',
-    'estado'      => 'required|string',
-]);
+{
+    $envio = Envio::findOrFail($id);
 
-        $envio->update($request->all());
-        return redirect()->route('envios.index')->with('success', 'Envío actualizado correctamente.');
+    $request->validate([
+        'estado' => 'required|string',
+    ]);
+
+    $envio->update(['estado' => $request->estado]);
+
+    // Sincronizar estado de la venta
+    if ($envio->venta) {
+        $estadoVenta = match($request->estado) {
+            'empacando'     => 'en_preparacion',
+            'en_transporte' => 'enviado',
+            'en_curso'      => 'enviado',
+            'entregado'     => 'entregado',
+            default         => $envio->venta->estado,
+        };
+        $envio->venta->update(['estado' => $estadoVenta]);
     }
+
+    return redirect()->route('envios.index')->with('success', 'Estado actualizado.');
+}
 
     public function destroy($id)
     {

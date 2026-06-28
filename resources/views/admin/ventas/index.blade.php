@@ -38,7 +38,7 @@
             <th>Total</th>
             <th>Fecha</th>
             <th>Usuario</th>
-            <th>Acciones</th>
+            <th>Estado</th>
         </tr>
     </thead>
     <tbody>
@@ -50,14 +50,19 @@
             <td>${{ number_format($venta->total, 2) }}</td>
             <td>{{ \Carbon\Carbon::parse($venta->created_at)->format('d/m/Y') }}</td>
             <td>{{ $venta->usuario->name ?? '—' }}</td>
-            <td style="display:flex; gap:8px;">
-                <a href="{{ route('ventas.edit', $venta) }}" class="btn-sl-outline">Editar</a>
-                <form action="{{ route('ventas.destroy', $venta) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-sl-danger" onclick="return confirm('¿Eliminar esta venta?')">Eliminar</button>
-                </form>
-            </td>
+            <td>
+    <form action="{{ route('ventas.update', $venta) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <select name="estado" class="sl-input" style="font-size:11px; padding:6px;" onchange="this.form.submit()">
+            <option value="pendiente_pago" {{ $venta->estado == 'pendiente_pago' ? 'selected' : '' }}>Pendiente pago</option>
+            <option value="pago_confirmado" {{ $venta->estado == 'pago_confirmado' ? 'selected' : '' }}>Pago confirmado</option>
+            <option value="en_preparacion" {{ $venta->estado == 'en_preparacion' ? 'selected' : '' }}>En preparación</option>
+            <option value="enviado" {{ $venta->estado == 'enviado' ? 'selected' : '' }}>Enviado</option>
+            <option value="entregado" {{ $venta->estado == 'entregado' ? 'selected' : '' }}>Entregado</option>
+        </select>
+    </form>
+</td>
         </tr>
         @empty
         <tr>

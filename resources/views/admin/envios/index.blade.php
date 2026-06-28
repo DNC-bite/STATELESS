@@ -38,7 +38,7 @@
             <th>Ciudad</th>
             <th>Estado</th>
             <th>ID Venta</th>
-            <th>Acciones</th>
+            <th>Estado</th>
         </tr>
     </thead>
     <tbody>
@@ -50,14 +50,19 @@
             <td>{{ $envio->ciudad }}</td>
             <td>{{ ucfirst($envio->estado) }}</td>
             <td>{{ $envio->venta_id }}</td>
-            <td style="display:flex; gap:8px;">
-                <a href="{{ route('envios.edit', $envio) }}" class="btn-sl-outline">Editar</a>
-                <form action="{{ route('envios.destroy', $envio) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-sl-danger" onclick="return confirm('¿Eliminar este envío?')">Eliminar</button>
-                </form>
-            </td>
+            <td>
+            <form action="{{ route('envios.update', $envio) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <select name="estado" class="sl-input" style="font-size:11px; padding:6px;" onchange="this.form.submit()">
+                    <option value="pendiente" {{ $envio->estado == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                    <option value="empacando" {{ $envio->estado == 'empacando' ? 'selected' : '' }}>Empacando</option>
+                    <option value="en_transporte" {{ $envio->estado == 'en_transporte' ? 'selected' : '' }}>En transporte</option>
+                    <option value="en_curso" {{ $envio->estado == 'en_curso' ? 'selected' : '' }}>Enviado</option>
+                    <option value="entregado" {{ $envio->estado == 'entregado' ? 'selected' : '' }}>Entregado</option>
+                </select>
+            </form>
+        </td>
         </tr>
         @empty
         <tr>

@@ -8,37 +8,29 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\DB;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): View
     {
         return view('auth.login');
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
-{
-    $request->authenticate();
-    $request->session()->regenerate();
+    {
+        $request->authenticate();
 
-    DB::table('sessions')
-        ->where('user_id', $request->user()->id)
-        ->where('id', '!=', session()->getId())
-        ->delete();
+        // Verificar si la cuenta está activa
+        if (Auth::user()->estado === 'inactivo') {
+            Auth::logout();
+            return back()->withErrors(['email' => 'Tu cuenta está deshabilitada. Contacta al administrador.']);
+        }
 
-    return redirect()->intended(route('account'));
-}
+        $request->session()->regenerate();
 
-    /**
-     * Destroy an authenticated session.
-     */
+        return redirect()->intended(route('account'));
+    }
+
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();

@@ -29,12 +29,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     // ... resto de rutas
 });
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'nocache'])->group(function () {
     Route::get('/account/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
 });
 Route::get('/account', function () {
     return view('account.index');
-})->middleware(['auth', 'verified'])->name('account'); // ← agrega 'verified'
+})->middleware(['auth', 'verified', 'nocache'])->name('account');
 
 Route::get('/producto/{producto}', [ProductoController::class, 'show'])->name('producto.show');
 
@@ -68,7 +68,7 @@ Route::get('/waves', function () {
     return view('ecomerce.waves', compact('waves'));
 })->name('waves');
 // Carrito
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'nocache'])->group(function () {
     Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
     Route::post('/carrito/agregar/{producto}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
     Route::patch('/carrito/actualizar/{item}', [CarritoController::class, 'actualizar'])->name('carrito.actualizar');
@@ -76,7 +76,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/carrito/vaciar', [CarritoController::class, 'vaciar'])->name('carrito.vaciar');
 }); 
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'nocache'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/procesar', [CheckoutController::class, 'procesar'])->name('checkout.procesar');
     Route::get('/checkout/factura/{venta}', [CheckoutController::class, 'factura'])->name('checkout.factura');
@@ -98,7 +98,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Rutas Admin
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin', 'nocache'])->prefix('admin')->group(function () {
     Route::resource('usuarios', UserController::class);
     Route::resource('categorias', CategoriaController::class);
     Route::resource('productos', ProductoController::class);
@@ -108,7 +108,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 });
 
 // Rutas Empleado
-Route::middleware(['auth', 'role:empleado'])->prefix('empleado')->name('empleado.')->group(function () {
+Route::middleware(['auth', 'role:empleado', 'nocache'])->prefix('empleado')->name('empleado.')->group(function () {
     Route::resource('ventas', VentaController::class);
     Route::resource('envios', EnvioController::class);
     Route::resource('proveedores', ProveedorController::class);

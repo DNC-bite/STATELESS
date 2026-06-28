@@ -46,14 +46,25 @@ class VentaController extends Controller
     public function update(Request $request, $id)
 {
     $venta = Venta::findOrFail($id);
+
     $request->validate([
-        'tipo_venta'   => 'required|string',
-        'metodo_pago'  => 'required|string',
-        'total'        => 'required|numeric|min:0',
+        'estado' => 'required|string',
     ]);
 
-    $venta->update($request->only(['tipo_venta', 'metodo_pago', 'total']));
-    return redirect()->route('ventas.index')->with('success', 'Venta actualizada correctamente.');
+    $venta->update(['estado' => $request->estado]);
+
+    // Sincronizar estado del envío
+    if ($venta->envio) {
+        $estadoEnvio = match($request->estado) {
+            'en_preparacion' => 'pendiente',
+            'enviado'        => 'en_curso',
+            'entregado'      => 'entregado',
+            default          => $venta->envio->estado,
+        };
+        $venta->envio->update(['estado' => $estadoEnvio]);
+    }
+
+    return redirect()->route('ventas.index')->with('success', 'Estado actualizado.');
 }
 
     public function destroy($id)

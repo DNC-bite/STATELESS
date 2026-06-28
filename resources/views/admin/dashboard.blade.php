@@ -154,6 +154,11 @@ new Chart(ctxMetodos, {
     },
     options: {
         responsive: true,
+        animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 1000,
+        },
         plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
     }
 });

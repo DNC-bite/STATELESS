@@ -26,6 +26,8 @@ class UserController extends Controller
     return view('admin.usuarios.index', compact('users', 'roles'));
 }
 
+
+
     public function create()
     {
         $roles = Role::all();
@@ -59,25 +61,35 @@ class UserController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        $request->validate([
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email|unique:users,email,' . $user->id,
-            'role_id' => 'required|exists:roles,id',
-        ]);
+{
+    $user = User::findOrFail($id);
 
-        $user->name    = $request->name;
-        $user->email   = $request->email;
-        $user->role_id = $request->role_id;
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
+    // Si solo viene el estado (desde el botón habilitar/inhabilitar)
+    if ($request->has('estado') && !$request->has('name')) {
+        $user->estado = $request->estado;
         $user->save();
-        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+        return redirect()->route('usuarios.index')->with('success', 'Estado actualizado correctamente.');
     }
+
+    // Actualización completa
+    $request->validate([
+        'name'    => 'required|string|max:255',
+        'email'   => 'required|email|unique:users,email,' . $user->id,
+        'role_id' => 'required|exists:roles,id',
+    ]);
+
+    $user->name    = $request->name;
+    $user->email   = $request->email;
+    $user->role_id = $request->role_id;
+    $user->estado  = $request->estado ?? $user->estado;
+
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->password);
+    }
+
+    $user->save();
+    return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+}
 
     public function destroy($id)
     {
